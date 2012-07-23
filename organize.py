@@ -12,6 +12,7 @@ import sys
 import collections
 import time
 import operator
+import contextlib
 
 def truepath(path):
 	p = os.path
@@ -30,13 +31,7 @@ class ArgumentParser(argparse.ArgumentParser):
 	@staticmethod
 	@_rename('new git branch name')
 	def _new_ref_name(ref):
-		# See http://git-scm.com/docs/git-check-ref-format.html
-		if '"' in ref or '\n' in ref:
-			raise ValueError
-		# check-ref-format will output prefix + ref, so prepare to chop of prefix
-		prefix = '"refs/heads/'
-		cmd = 'git check-ref-format --normalize ' + prefix + '{!s}"'.format(ref)
-		return subprocess.check_output(cmd.split())[len(prefix):-2]
+		return Git.validate_branch_name(ref)
 
 	@staticmethod
 	@_rename('directory name')
@@ -67,13 +62,6 @@ class ArgumentParser(argparse.ArgumentParser):
 				help='Verbose mode: say what is happening')
 		self.add_argument('branch', type=self._new_ref_name,
 				help='Branch to create')
-
-
-def RFC2822timestamp(secs_since_epoch):
-	"Convert local time in seconds since epoch to a RFC-2822-compliant time stamp"
-	# See http://docs.python.org/py3k/library/time.html#time.strftime
-	return time.strftime("%a, %d %b %Y %H:%M:%S %z", time.localtime(secs_since_epoch))
-
 
 class SortedFiles(collections.OrderedDict):
 
@@ -110,9 +98,58 @@ class RecursiveSortedFiles(SortedFiles):
 					yield normpath(join(root, start, parent, item))
 
 
+class Git:
+
+
+	def __init__(self, repo):
+		self.repo = os.path.abspath(repo)
+
+	@contextlib.contextmanager
+	def cd(self, dir=None):
+		if dir is None:
+			dir = self.repo
+		oldcwd = os.getcwd()
+		os.chdir(dir)
+		yield self.repo
+		os.chdir(oldcwd)
+
+	@classmethod
+	def validate_branch_name(cls, ref):
+		# See http://git-scm.com/docs/git-check-ref-format.html
+		if '"' in ref or '\n' in ref:
+			raise ValueError
+		# check-ref-format will output prefix + ref, so prepare to chop of prefix
+		prefix = '"refs/heads/'
+		cmd = 'git check-ref-format --normalize ' + prefix + '{!s}"'.format(ref)
+		return subprocess.check_output(cmd.split())[len(prefix):-2]
+
+	def was_modified(self, file):
+		with self.cd():
+			status = subprocess.check_output('git status --porcelain'.split())
+			return file.encode(sys.getfilesystemencoding()) in status
+
+	def checkout_branch(self, branch):
+		with self.cd():
+			return subprocess.check_call(['git', 'checkout', '-b', branch])
+
+	def commit_file(self, file, message, date=None):
+		args = ['git', 'commit', '--message="' + message + '"']
+		if date:
+			args.extend(['--date="{!s}"'.format(date)])
+		# XXX Make sure nothing else is staged. Get a lock if possible?
+		with self.cd():
+			subprocess.check_call(['git', 'add', file])
+			subprocess.check_call(args)
+
+	def datetime_from_timestamp(self, timestamp):
+		"Convert local time in seconds since epoch to a RFC-2822-compliant time stamp"
+		# See http://docs.python.org/py3k/library/time.html#time.strftime
+		return time.strftime("%a, %d %b %Y %H:%M:%S %z", time.localtime(timestamp))
+
 def main(args):
 	parser = ArgumentParser()
 	args = parser.parse_args(args)
+	git = Git(args.repo)
 	if args.recurse:
 		ls = RecursiveSortedFiles(args.source)
 	else:
@@ -120,30 +157,24 @@ def main(args):
 	if args.name is None:
 		args.name = os.path.basename(next(iter(ls)))
 	oldwd = os.getcwd()
-	os.chdir(args.repo)
-	try:
-		# Find out if the file's been modified
-		status = subprocess.check_output('git status --porcelain'.split())
-		if args.name.encode(sys.getfilesystemencoding()) in status:
-			if not args.force:
-				resp = input(args.name + ' modified in working tree. Overwrite? ')
-				if resp.lower() not in ['y', 'yes', 'ok', 'okay', '1']:
-					parser.error(args.name + ' modified in working tree.')
-					assert False, 'NOTREACHED'
-		# Create the branch
-		subprocess.check_call(['git', 'checkout', '-b', args.branch])
-		for file, timestamp in ls.items():
-			if args.verbose:
-				print('Copying {!r} to {!r}'.format(file, args.name))
-			shutil.copy2(file, args.name)
-			subprocess.check_call(['git', 'add', args.name])
-			msg = '--message="Auto-add {!r} as {!r}."'.format(
-					os.path.basename(file), args.name)
-			date = '--date="' + RFC2822timestamp(timestamp) + '"'
-			subprocess.check_call(['git', 'commit', date, msg])
-			if args.delete:
-				os.unlink(file)
-	finally:
-		os.chdir(oldwd)
+	# Find out if the file's been modified
+	if git.was_modified(args.name):
+		if not args.force:
+			resp = input(args.name + ' modified in working tree. Overwrite? ')
+			if resp.lower() not in ['y', 'yes', 'ok', 'okay', '1']:
+				parser.error(args.name + ' modified in working tree.')
+				assert False, 'NOTREACHED'
+	# Create the branch
+	git.checkout_branch(args.branch)
+	for file, timestamp in ls.items():
+		if args.verbose:
+			print('Copying {!r} to {!r}'.format(file, args.name))
+		shutil.copy2(file, os.path.join(args.repo, args.name))
+		msg = 'Auto-add {!r} as {!r}.'.format(os.path.basename(file), args.name)
+		date = git.datetime_from_timestamp(timestamp)
+		git.commit_file(args.name, msg, date)
+		if args.delete:
+			os.unlink(file)
+
 if __name__ == '__main__':
 	main(sys.argv[1:])
