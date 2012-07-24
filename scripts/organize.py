@@ -52,8 +52,6 @@ class ArgumentParser(argparse.ArgumentParser):
 				help='Destination repository', default='.')
 		self.add_argument('-n', '--name', type=str,
 				help="Name to use for file in repo (default: first version's name")
-		self.add_argument('-d', '--delete', action='store_true',
-				help='Delete files as they are successfully added to the repo')
 		self.add_argument('-R', '--recurse', action='store_true',
 				help='Include subdirectories of source directory in file search')
 		self.add_argument('-f', '--force', action='store_true',
@@ -182,8 +180,6 @@ def main(args):
 		msg = 'Auto-add {!r} as {!r}.'.format(os.path.basename(file), name)
 		date = git.datetime_from_timestamp(timestamp)
 		git.commit_file(name, msg, date)
-		if args.delete:
-			os.unlink(file)
 
 
 if __name__ == '__main__':
