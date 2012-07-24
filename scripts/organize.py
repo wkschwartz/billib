@@ -147,6 +147,12 @@ class Git:
 		return time.strftime("%a, %d %b %Y %H:%M:%S %z", time.localtime(timestamp))
 
 
+def copy_ext(old, new):
+	"Give new the same file extension that old had"
+	root, ext = os.path.splitext(old)
+	return new + ext
+
+
 def main(args):
 	parser = ArgumentParser()
 	args = parser.parse_args(args)
@@ -168,12 +174,13 @@ def main(args):
 	# Create the branch
 	git.checkout_branch(args.branch)
 	for file, timestamp in ls.items():
+		name = copy_ext(file, args.name)
 		if args.verbose:
-			print('Copying {!r} to {!r}'.format(file, args.name))
-		shutil.copy2(file, os.path.join(args.repo, args.name))
-		msg = 'Auto-add {!r} as {!r}.'.format(os.path.basename(file), args.name)
+			print('Copying {!r} to {!r}'.format(file, name))
+		shutil.copy2(file, os.path.join(args.repo, name))
+		msg = 'Auto-add {!r} as {!r}.'.format(os.path.basename(file), name)
 		date = git.datetime_from_timestamp(timestamp)
-		git.commit_file(args.name, msg, date)
+		git.commit_file(name, msg, date)
 		if args.delete:
 			os.unlink(file)
 
