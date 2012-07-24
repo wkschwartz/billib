@@ -89,11 +89,12 @@ class SortedFiles(collections.OrderedDict):
 
 class RecursiveSortedFiles(SortedFiles):
 
-	def listdir(self, start):
+	def listdir(self, start, ignore=('.git',)):
 		root, normpath, join = self.root, os.path.normpath, os.path.join
 		for parent, children, files in os.walk(join(root, start)):
-			if '.git' in children:
-				children.remove('.git')
+			for baddir in ignore:
+				if baddir in children:
+					children.remove(baddir)
 			for items in children, files:
 				for item in items:
 					yield normpath(join(root, start, parent, item))
