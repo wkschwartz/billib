@@ -100,7 +100,6 @@ class RecursiveSortedFiles(SortedFiles):
 
 class Git:
 
-
 	def __init__(self, repo):
 		self.repo = os.path.abspath(repo)
 
@@ -175,6 +174,7 @@ def main(args):
 		git.commit_file(args.name, msg, date)
 		if args.delete:
 			os.unlink(file)
+
 
 if __name__ == '__main__':
 	main(sys.argv[1:])
