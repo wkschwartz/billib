@@ -63,6 +63,7 @@ class ArgumentParser(argparse.ArgumentParser):
 		self.add_argument('branch', type=self._new_ref_name,
 				help='Branch to create')
 
+
 class SortedFiles(collections.OrderedDict):
 
 	def __init__(self, root, key=os.path.getmtime):
@@ -144,6 +145,7 @@ class Git:
 		"Convert local time in seconds since epoch to a RFC-2822-compliant time stamp"
 		# See http://docs.python.org/py3k/library/time.html#time.strftime
 		return time.strftime("%a, %d %b %Y %H:%M:%S %z", time.localtime(timestamp))
+
 
 def main(args):
 	parser = ArgumentParser()
