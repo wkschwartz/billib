@@ -175,6 +175,7 @@ def main(args):
 				assert False, 'NOTREACHED'
 	# Create the branch
 	git.checkout_branch(args.branch)
+	count = 0
 	for file, timestamp in ls.items():
 		if not fnmatch.fnmatch(os.path.basename(file), args.glob):
 			continue
@@ -185,6 +186,8 @@ def main(args):
 		msg = 'Auto-add {!r} as {!r}.'.format(os.path.basename(file), name)
 		date = git.datetime_from_timestamp(timestamp)
 		git.commit_file(name, msg, date)
+		count += 1
+	print('Copied', count, 'file' + 's' * (count != 1) + '.')
 
 
 if __name__ == '__main__':
