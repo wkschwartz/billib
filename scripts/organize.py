@@ -43,26 +43,24 @@ class ArgumentParser(argparse.ArgumentParser):
 		return path
 
 	def __init__(self, *args, description=__doc__,
-				 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-				 **kwargs):
-		super().__init__(description=description, formatter_class=formatter_class,
-				*args, **kwargs)
-		self.add_argument('-s', '--source', nargs='?', type=self._dir_name,
-				help='Source directory', default='.')
-		self.add_argument('-r', '--repo', nargs='?', type=self._dir_name,
-				help='Destination repository', default='.')
-		self.add_argument('-n', '--name', type=str,
-				help="Name to use for file in repo (default: first version's name")
-		self.add_argument('-R', '--recurse', action='store_true',
-				help='Include subdirectories of source directory in file search')
-		self.add_argument('-f', '--force', action='store_true',
-				help="Assume answer is 'yes' to all safety prompts")
-		self.add_argument('-v', '--verbose', action='store_true',
-				help='Verbose mode: say what is happening')
-		self.add_argument('-g', '--glob',
-				help='Glob-like pattern of file names to search for')
+				 epilog="Commits are ordered by files' last-modified date.", **kwargs):
+		super().__init__(*args, description=description, epilog=epilog, **kwargs)
+		self.add_argument('--source', type=self._dir_name,
+				help="source directory (default: '.')", default='.')
+		self.add_argument('--filter',
+				help="file name pattern to search SOURCE for (default: '*')")
+		self.add_argument('--repo', type=self._dir_name,
+				help="destination repository (default: '.')", default='.')
+		self.add_argument('--name', type=str,
+				help="name to use for file in repo (default: first version's)")
+		self.add_argument('--recurse', action='store_true',
+				help='include subdirectories of source directory in file search')
+		self.add_argument('--force', action='store_true',
+				help="assume answer is 'yes' to all safety prompts")
+		self.add_argument('--verbose', action='store_true',
+				help='verbose mode: say what is happening')
 		self.add_argument('branch', type=self._new_ref_name,
-				help='Branch to create')
+				help='branch to create')
 
 
 class SortedFiles(collections.OrderedDict):
@@ -177,7 +175,7 @@ def main(args):
 	git.checkout_branch(args.branch)
 	count = 0
 	for file, timestamp in ls.items():
-		if not fnmatch.fnmatch(os.path.basename(file), args.glob):
+		if not fnmatch.fnmatch(os.path.basename(file), args.filter):
 			continue
 		name = copy_ext(file, args.name)
 		if args.verbose:
