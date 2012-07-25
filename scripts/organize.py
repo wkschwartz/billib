@@ -13,6 +13,7 @@ import collections
 import time
 import operator
 import contextlib
+import fnmatch
 
 def truepath(path):
 	p = os.path
@@ -58,6 +59,8 @@ class ArgumentParser(argparse.ArgumentParser):
 				help="Assume answer is 'yes' to all safety prompts")
 		self.add_argument('-v', '--verbose', action='store_true',
 				help='Verbose mode: say what is happening')
+		self.add_argument('-g', '--glob',
+				help='Glob-like pattern of file names to search for')
 		self.add_argument('branch', type=self._new_ref_name,
 				help='Branch to create')
 
@@ -173,6 +176,8 @@ def main(args):
 	# Create the branch
 	git.checkout_branch(args.branch)
 	for file, timestamp in ls.items():
+		if not fnmatch.fnmatch(os.path.basename(file), args.glob):
+			continue
 		name = copy_ext(file, args.name)
 		if args.verbose:
 			print('Copying {!r} to {!r}'.format(file, name))
