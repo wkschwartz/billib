@@ -13,6 +13,15 @@ Contents
 	Automatically create a Git repository from a folder fiasco like
 	"thing v1.txt", "thing v2.txt", etc.
 
+### Ado
+
+These are Stata ado programs.
+
+* walk
+
+	Create a local macro that contains a list of files in folder, recursively
+	through subdirectories.
+
 License
 -------
 
