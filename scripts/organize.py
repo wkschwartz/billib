@@ -121,7 +121,10 @@ class Git:
 		# check-ref-format will output prefix + ref, so prepare to chop of prefix
 		prefix = '"refs/heads/'
 		cmd = 'git check-ref-format --normalize ' + prefix + '{!s}"'.format(ref)
-		return subprocess.check_output(cmd.split())[len(prefix):-2]
+		normalized = subprocess.check_output(cmd.split())[len(prefix):-2]
+		if not normalized:
+			raise ValueError('Bad branch name: {!r}'.format(ref))
+		return normalized
 
 	def was_modified(self, file):
 		with self.cd():
