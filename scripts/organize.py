@@ -204,6 +204,7 @@ def main(args):
 		count += 1
 	print('Copied', count, 'file' + 's' * (count != 1) + '.')
 
+	parser.exit()
 
 if __name__ == '__main__':
 	main(sys.argv[1:])
