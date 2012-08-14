@@ -113,6 +113,12 @@ class Git:
 		yield self.repo
 		os.chdir(oldcwd)
 
+	@property
+	def branches(self):
+		with self.cd():
+			stdout = subprocess.check_output(['git', 'branch', '-a'])
+		return stdout.decode(sys.getfilesystemencoding()).split('\n')
+
 	@classmethod
 	def validate_branch_name(cls, ref):
 		# See http://git-scm.com/docs/git-check-ref-format.html
