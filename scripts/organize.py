@@ -150,6 +150,11 @@ class Git:
 			subprocess.check_call(['git', 'add', file])
 			subprocess.check_call(args)
 
+	def issue_command(self, *args):
+		args = list(args)
+		with self.cd():
+			return subprocess.check_output(['git'] + args)
+
 	def datetime_from_timestamp(self, timestamp):
 		"Convert local time in seconds since epoch to a RFC-2822-compliant time stamp"
 		# See http://docs.python.org/py3k/library/time.html#time.strftime
