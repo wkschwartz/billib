@@ -172,7 +172,6 @@ def main(args):
 		ls = SortedFiles(args.source)
 	if args.name is None:
 		args.name = os.path.basename(next(iter(ls)))
-	oldwd = os.getcwd()
 	# Find out if the file's been modified
 	if git.was_modified(args.name):
 		if not args.force:
