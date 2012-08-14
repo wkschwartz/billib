@@ -113,6 +113,10 @@ class Git:
 		yield self.repo
 		os.chdir(oldcwd)
 
+	def init(self):
+		with self.cd():
+			subprocess.check_call(['git', 'init'])
+
 	@property
 	def branches(self):
 		with self.cd():
