@@ -6,7 +6,12 @@ import os
 import time
 import functools
 import organize
+import random
 
+RANDOM_SEED = 0xdeadbeef
+
+def setUpModule():
+	random.seed(RANDOM_SEED)
 
 class OrganizeScenario:
 
@@ -48,14 +53,17 @@ class OrganizeScenario:
 		return ['file' + str(i) for i in range(10)]
 
 	def _excl_touch(self, path, time=None):
-		"""Exclusively create a file, optionally setting access and modification times.
+		"""Safely write a random file, optionally setting access and modification times.
 
 		`path` must be an absolute path. `time`, if specified, is an int or
 		float in seconds.
 		"""
 		if not os.path.isabs(path):
 			raise ValueError('Expected absolute path but got %r' % path)
-		with open(path, 'x'): pass
+		file_len = random.randint(0x100,  0x1ff)
+		file_content = bytes([random.randint(0, 0xff) for i in range(file_len)])
+		with open(path, 'xb') as f:
+			f.write(file_content)
 		if time is not None:
 			os.utime(path, time=(time, time))
 
