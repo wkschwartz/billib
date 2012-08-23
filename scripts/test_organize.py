@@ -7,6 +7,8 @@ import time
 import functools
 import organize
 import random
+import itertools
+import collections
 
 RANDOM_SEED = 0xdeadbeef
 
@@ -18,8 +20,6 @@ class OrganizeScenario:
 	"Set up basic scenario for organize.py to operate on"
 
 	vcs = organize.Git
-
-	time_interval = 3600 # Seconds
 
 	def setup_dirs(self):
 		return tempfile.TemporaryDirectory(), tempfile.TemporaryDirectory()
@@ -38,12 +38,10 @@ class OrganizeScenario:
 	def setup_old_dir(self, dir):
 		files = self.setup_file_names()
 		total = len(files)
-		start_time = self.get_start_time(total)
-		for count, file in enumerate(files):
+		for count, file, time in zip(itertools.count(), files, self.SetUpFileTimes(total)):
 			files[count] = abspath = os.path.join(dir, file)
 			if os.path.sep in file:
 				os.mkdirs(os.path.dirname(abspath), mode=0o600, exist_ok=True)
-			time = self.get_next_time(count, total, start_time)
 			self._excl_touch(abspath, time)
 			self.assertEqual(os.path.getmtime(abspath), time)
 		return files
@@ -67,13 +65,23 @@ class OrganizeScenario:
 		if time is not None:
 			os.utime(path, (time, time))
 
-	def get_start_time(self, total):
-		"Return date-time to be used for earliest old-file. total is # of files"
-		return int(time.time() - total * self.time_interval)
+	class SetUpFileTimes(collections.abc.Iterator):
 
-	def get_next_time(self, count, total, start):
-		"Return date-time to be used for next old-file."
-		return int(start + count * self.time_interval)
+		"Iterator of date-times to be used for `total` files"
+
+		time_interval = 3600 # Seconds
+
+		def __init__(self, total):
+			self.total = total
+			self.count = 0
+			self.start = int(time.time() - total * self.time_interval)
+
+		def __next__(self):
+			if self.count >= self.total:
+				raise StopIteration
+			time = int(self.start + self.count * self.time_interval)
+			self.count += 1
+			return time
 
 	def tearDown(self):
 		self.old_dir.cleanup()
