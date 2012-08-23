@@ -26,8 +26,8 @@ class OrganizeScenario:
 
 	def setUp(self):
 		self.old_dir, self.new_dir = self.setup_dirs()
-		self.old_files = self.setup_old_dir(self.old_dir)
-		self.new_repo = self.setup_new_repo(self.new_dir)
+		self.old_files = self.setup_old_dir(self.old_dir.name)
+		self.new_repo = self.setup_new_repo(self.new_dir.name)
 
 	def setup_new_repo(self, dir):
 		repo = self.vcs(dir)
@@ -48,7 +48,7 @@ class OrganizeScenario:
 			self.assertEqual(os.path.getmtime(abspath), time)
 		return files
 
-	def setup_file_names():
+	def setup_file_names(self):
 		"Return a list of file names"
 		return ['file' + str(i) for i in range(10)]
 
@@ -65,7 +65,7 @@ class OrganizeScenario:
 		with open(path, 'xb') as f:
 			f.write(file_content)
 		if time is not None:
-			os.utime(path, time=(time, time))
+			os.utime(path, (time, time))
 
 	def get_start_time(self, total):
 		"Return date-time to be used for earliest old-file. total is # of files"
@@ -90,7 +90,7 @@ class TestAssumptionsCorrect(OrganizeScenario, unittest.TestCase):
 
 	"Basic test of ogranize.py on a simple case when its assumptions are correct"
 
-	def runTest(self)
+	def runTest(self):
 		rc = self.run_main('--source', self.old_dir.name, '--repo', self.new_dir.name, 'test-branch')
 		self.assertEqual(rc, 0)
 		log_entries = self.new_repo.issue_command('log', '--oneline',
