@@ -69,11 +69,11 @@ class OrganizeScenario:
 
 	def get_start_time(self, total):
 		"Return date-time to be used for earliest old-file. total is # of files"
-		return time.time() - total * self.time_interval
+		return int(time.time() - total * self.time_interval)
 
 	def get_next_time(self, count, total, start):
 		"Return date-time to be used for next old-file."
-		return start + count * self.time_interval
+		return int(start + count * self.time_interval)
 
 	def tearDown(self):
 		self.old_dir.cleanup()
