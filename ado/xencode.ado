@@ -1,7 +1,7 @@
 *! simplified interface to encode -- version 0.1 2012-09-05
 
 capture program drop xencode
-program define xencode, nclass
+program define xencode, rclass
 	version 11.2
 	syntax varname [if] [in], [REPLAcement(string) Label(name) noExtend]
 	if (`"`replacement'"' == "") {
@@ -15,6 +15,7 @@ program define xencode, nclass
 	encode `varlist' `if' `in', generate(`replacement') `label' `extend'
 	// Following code copied from clonevar.ado version 1.0.1 13oct2004
 	local w : variable label `varlist'
+	return local label = `"`w'"'
 	if (`"`w'"' != "") label variable `replacement' `"`w'"'
 	tokenize `"`: char `varlist'[]'"' 
 	while (`"`1'"' != "") {
