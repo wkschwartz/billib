@@ -3,8 +3,8 @@
 capture program drop date_encode
 program define date_encode, rclass
 	version 11.2
-	syntax varname[, REPLAcement(string) TOPyear(integer) FORMat(string)]
-	if ("`topyear'" == "") {
+	syntax varname[, REPLAcement(string) TOPyear(integer 0) FORMat(string)]
+	if (`topyear' == 0) {
 		local topyear = real(substr(c(current_date), -4, .)) + 1
 	}
 	if (`"`format'"' == "") {
