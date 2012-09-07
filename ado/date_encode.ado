@@ -3,9 +3,15 @@
 capture program drop date_encode
 program define date_encode, rclass
 	version 11.2
-	syntax varname[, REPLAcement(string)]
+	syntax varname[, REPLAcement(string) TOPyear(integer) FORMat(string)]
+	if ("`topyear'" == "") {
+		local topyear = real(substr(c(current_date), -4, .)) + 1
+	}
+	if (`"`format'"' == "") {
+		local format = "MDY"
+	}
 	tempvar new
-	generate long `new' = date(`varlist', "$DATE_FORMAT", ${DATE_TOP})
+	generate long `new' = date(`varlist', `"`format'"', `topyear')
 	format `new' %td
 	label variable `new' `"`:variable label `varlist''"'
 	return local label: variable label `varlist'
