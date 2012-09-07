@@ -10,6 +10,8 @@ program define xencode, nclass
 	}
 	else local samename = 0
 	if ("`label'" != "") local label label(`label')
+	else if (`samename') local label label(`varlist')
+	else				 local label label(`replacement')
 	encode `varlist' `if' `in', generate(`replacement') `label' `extend'
 	// Following code copied from clonevar.ado version 1.0.1 13oct2004
 	local w : variable label `varlist'
