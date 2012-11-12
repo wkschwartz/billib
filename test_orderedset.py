@@ -7,7 +7,7 @@ class TestLeftLeaningRedBlackTree(unittest.TestCase):
 		self.cls = orderedset.LeftLeaningRedBlackTree
 		self.data = tuple(chr(i + 0x20) for i in range(95))
 
-	def test_insert_search(self):
+	def test_int_keys_in_order(self):
 		for i in range(len(self.data)):
 			t = self.cls()
 			data = list(self.data[:i])
