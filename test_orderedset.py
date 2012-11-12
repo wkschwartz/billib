@@ -18,7 +18,7 @@ class TestLeftLeaningRedBlackTree(unittest.TestCase):
 				self.assertEqual(self.data[j], t.search(j))
 			self.assertRaises(KeyError, t.search, i + 1)
 
-	
+
 	def test_insert_replaces(self):
 		t = self.cls()
 		t.insert(1, 'a')
