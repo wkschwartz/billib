@@ -12,10 +12,14 @@ class TestLeftLeaningRedBlackTree(unittest.TestCase):
 			t = self.cls()
 			data = list(self.data[:i])
 			for j in range(i):
-				t.insert(j, self.data[j])
-				self.assertEqual(self.data[j], t.search(j))
-			for j in range(i):
-				self.assertEqual(self.data[j], t.search(j))
+				self.assertEqual(j, len(t))
+				self.assertNotIn(j, t)
+				self.assertEqual(list(range(j)), list(t))
+				t.insert(j, data[j])
+				self.assertEqual(data[j], t.search(j))
+				self.assertIn(j, t)
+			self.assertEqual(i, len(t))
+			self.assertEqual(list(range(len(data))), list(t))
 			self.assertRaises(KeyError, t.search, i + 1)
 
 	def test_insert_replaces(self):

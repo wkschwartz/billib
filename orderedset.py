@@ -1,4 +1,6 @@
-class LeftLeaningRedBlackTree:
+from collections.abc import Sized, Iterable, Container
+
+class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 
 	"""A symbol table implemented using a left-leaning red-black BST. This is
 	the 2-3 version.
@@ -22,9 +24,40 @@ class LeftLeaningRedBlackTree:
 			self._color = LeftLeaningRedBlackTree._RED
 			self._left = self._right = None
 
+		def __len__(self):
+			l = 0 if self._left is None else len(self._left)
+			r = 0 if self._right is None else len(self._right)
+			return l + 1 + r
+
+		def __iter__(self):
+			if self._left is not None:
+				for item in self._left:
+					yield item
+			yield self._key
+			if self._right is not None:
+				for item in self._right:
+					yield item
+
+
 	def __init__(self):
 		"""Instantiate new empty BST."""
 		self._root = None
+
+	def __len__(self):
+		return 0 if self._root is None else len(self._root)
+
+	def __contains__(self, key):
+		try:
+			self.search(key)
+		except KeyError:
+			return False
+		return True
+
+	def __iter__(self):
+		if self._root is None:
+			return
+		for item in self._root:
+			yield item
 
 	def search(self, key):
 		"""Return value associated with `key`; `None` if `key` not contained."""
@@ -36,7 +69,7 @@ class LeftLeaningRedBlackTree:
 				x = x._left
 			elif key > x._key:
 				x = x._right
-		return None
+		raise KeyError(key)
 
 	def insert(self, key, value):
 		"""Insert the key-value pair; overwrite value if key already present."""
@@ -62,6 +95,8 @@ class LeftLeaningRedBlackTree:
 		if isred(h._left) and isred(h._right):
 			cls._flip_colors(h)
 		return h
+
+	#### Red-black helper methods ####
 
 	@classmethod
 	def _rotate_left(cls, h):
