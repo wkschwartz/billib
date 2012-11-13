@@ -142,5 +142,5 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 		if self._root is None:
 			self._root = self._Node(key, value)
 		else:
-			self._root = self._root._insert(key, value)
+			self._root = self._root.insert(key, value)
 		self._root._color = self._Node._BLACK
