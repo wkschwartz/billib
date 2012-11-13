@@ -2,7 +2,12 @@ from collections.abc import Sized, Iterable, Container
 
 class _Node(Sized, Iterable, Container):
 
-	"""BST helper node data type."""
+	"""A left-leaning red-black BST. This is the 2-3 version.
+
+	This code is adapted to Python from the Java code given in "Left-leaning
+	Red-Black Trees", Robert Sedgewick,
+	http://www.cs.princeton.edu/~rs/talks/LLRB/LLRB.pdf. See also the code at
+	http://algs4.cs.princeton.edu/33balanced/RedBlackBST.java.html."""
 
 	_RED = True
 	_BLACK = False
@@ -116,15 +121,7 @@ class _Node(Sized, Iterable, Container):
 
 class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 
-	"""A symbol table implemented using a left-leaning red-black BST. This is
-	the 2-3 version.
-
-	This code is adapted to Python from the Java code given in "Left-leaning
-	Red-Black Trees", Robert Sedgewick,
-	http://www.cs.princeton.edu/~rs/talks/LLRB/LLRB.pdf. See also the code at
-	http://algs4.cs.princeton.edu/33balanced/RedBlackBST.java.html.
-	"""
-
+	"""A symbol table implemented using a binary search tree."""
 
 	def __init__(self):
 		"""Instantiate new empty BST."""
