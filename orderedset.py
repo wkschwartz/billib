@@ -19,6 +19,11 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 		_BLACK = False
 
 		def __init__(self, key, value):
+			try:
+				key < key
+			except TypeError:
+				raise TypeError("{.__name__!r} can't contain unorderable keys of "
+								"type {.__name__!r}".format(type(self), type(key)))
 			self._key = key
 			self._value = value
 			self._color = self._RED

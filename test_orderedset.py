@@ -29,5 +29,11 @@ class TestLeftLeaningRedBlackTree(unittest.TestCase):
 		t.insert(1, 'b')
 		self.assertEqual('b', t.search(1))
 
+	def test_only_ordered_keys(self):
+		t = self.cls()
+		for k in None, object(), type, {}:
+			self.assertRaises(TypeError, t.search, k, 'a')
+			self.assertRaises(TypeError, t.insert, k, 'a')
+
 if __name__ == '__main__':
 	unittest.main()
