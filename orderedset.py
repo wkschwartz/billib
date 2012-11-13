@@ -119,38 +119,34 @@ class _Node(Sized, Iterable, Container):
 		return h._color == cls._RED
 
 
+class _Null(Sized, Iterable, Container):
+
+	"Drop-in dummy `_Node`"
+
+	def __len__(self): return 0
+	def __iter__(self): return iter([])
+	def __contains__(self, key): return False
+	def search(self, key): raise KeyError(key)
+	def insert(self, key, value): return _Node(key, value)
+
+
 class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 
 	"""A symbol table implemented using a binary search tree."""
 
 	def __init__(self):
 		"""Instantiate new empty BST."""
-		self._root = None
+		self._root = _Null()
 
-	def __len__(self):
-		return 0 if self._root is None else len(self._root)
-
-	def __contains__(self, key):
-		if self._root is None:
-			return False
-		return key in self._root
-
-	def __iter__(self):
-		if self._root is None:
-			return
-		for item in self._root:
-			yield item
+	def __len__(self): return len(self._root)
+	def __contains__(self, key): return key in self._root
+	def __iter__(self): return iter(self._root)
 
 	def search(self, key):
 		"""Return value associated with `key`; `None` if `key` not contained."""
-		if self._root is None:
-			raise KeyError(key)
 		return self._root.search(key)
 
 	def insert(self, key, value):
 		"""Insert the key-value pair; overwrite value if key already present."""
-		if self._root is None:
-			self._root = _Node(key, value)
-		else:
-			self._root = self._root.insert(key, value)
+		self._root = self._root.insert(key, value)
 		self._root._color = _Node._BLACK
