@@ -38,6 +38,58 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 				for item in self._right:
 					yield item
 
+		@classmethod
+		def _insert(cls, h, key, value):
+			"""Recursively insert the key-value pair in the subtree rooted at `h`."""
+			if h is None:
+				return cls(key, value)
+			if key == h._key:
+				h._value = value
+			elif key < h._key:
+				h._left = cls._insert(h._left, key, value)
+			else:
+				h._right = cls._insert(h._right, key, value)
+			isred = cls._isred
+			if isred(h._right) and not isred(h._left):
+				h = h._rotate_left()
+			if isred(h._left) and isred(h._left._left):
+				h = cls._rotate_right(h)
+			if isred(h._left) and isred(h._right):
+				cls._flip_colors(h)
+			return h
+
+		#### Red-black helper methods ####
+
+		def _rotate_left(self):
+			"""Make a right-leaning link `self` lean to the left."""
+			x = self._right
+			self._right = x._left
+			x._left = self
+			x._color = self._color
+			self._color = LeftLeaningRedBlackTree._RED
+			return x
+
+		def _rotate_right(self):
+			"""Make a left-leaning link `self` lean to the right."""
+			x = self._left
+			self._left = x._right
+			x._right = self
+			x._color = self._color
+			self._color = LeftLeaningRedBlackTree._RED
+			return x
+
+		def _flip_colors(self):
+			"""Flip the colors of a node `self` and its two children."""
+			self._color = not self._color
+			self._left._color = not self._left._color
+			self._right._color = not self._right._color
+
+		@classmethod
+		def _isred(cls, h):
+			"""Return whether node `h` is red; False if `h` is `None`."""
+			if h is None:
+				return False
+			return h._color == LeftLeaningRedBlackTree._RED
 
 	def __init__(self):
 		"""Instantiate new empty BST."""
@@ -73,61 +125,5 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 
 	def insert(self, key, value):
 		"""Insert the key-value pair; overwrite value if key already present."""
-		self._root = self._insert(self._root, key, value)
+		self._root = self._Node._insert(self._root, key, value)
 		self._root._color = self._BLACK
-
-	@classmethod
-	def _insert(cls, h, key, value):
-		"""Recursively insert the key-value pair in the subtree rooted at `h`."""
-		if h is None:
-			return cls._Node(key, value)
-		if key == h._key:
-			h._value = value
-		elif key < h._key:
-			h._left = cls._insert(h._left, key, value)
-		else:
-			h._right = cls._insert(h._right, key, value)
-		isred = cls._isred
-		if isred(h._right) and not isred(h._left):
-			h = cls._rotate_left(h)
-		if isred(h._left) and isred(h._left._left):
-			h = cls._rotate_right(h)
-		if isred(h._left) and isred(h._right):
-			cls._flip_colors(h)
-		return h
-
-	#### Red-black helper methods ####
-
-	@classmethod
-	def _rotate_left(cls, h):
-		"""Make a right-leaning link `h` lean to the left."""
-		x = h._right
-		h._right = x._left
-		x._left = h
-		x._color = h._color
-		h._color = cls._RED
-		return x
-
-	@classmethod
-	def _rotate_right(cls, h):
-		"""Make a left-leaning link `h` lean to the right."""
-		x = h._left
-		h._left = x._right
-		x._right = h
-		x._color = h._color
-		h._color = cls._RED
-		return x
-
-	@classmethod
-	def _flip_colors(cls, h):
-		"""Flip the colors of a node `h` and its two children."""
-		h._color = not h._color
-		h._left._color = not h._left._color
-		h._right._color = not h._right._color
-
-	@classmethod
-	def _isred(cls, h):
-		"""Return whether node `h` is red; False if `h` is `None`."""
-		if h is None:
-			return False
-		return h._color == cls._RED
