@@ -143,7 +143,7 @@ class BinarySearchTree(Sized, Iterable, Container):
 	def __iter__(self): return iter(self._root)
 
 
-class LeftLeaningRedBlackTree(BinarySearchTree):
+class OrderedSymbolTable(BinarySearchTree):
 
 	"""A symbol table implemented using a binary search tree."""
 

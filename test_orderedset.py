@@ -5,7 +5,7 @@ import random
 class TestLeftLeaningRedBlackTree(unittest.TestCase):
 
 	def setUp(self):
-		self.cls = orderedset.LeftLeaningRedBlackTree
+		self.cls = orderedset.OrderedSymbolTable
 		self.data = tuple(chr(i + 0x20) for i in range(95))
 
 	def test_int_keys_in_order(self):
