@@ -130,9 +130,9 @@ class _Null(Sized, Iterable, Container):
 	def insert(self, key, value): return _Node(key, value)
 
 
-class LeftLeaningRedBlackTree(Sized, Iterable, Container):
+class BinarySearchTree(Sized, Iterable, Container):
 
-	"""A symbol table implemented using a binary search tree."""
+	"Abstract binary search tree. This class is only useful for sublcassing."
 
 	def __init__(self):
 		"""Instantiate new empty BST."""
@@ -141,6 +141,11 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 	def __len__(self): return len(self._root)
 	def __contains__(self, key): return key in self._root
 	def __iter__(self): return iter(self._root)
+
+
+class LeftLeaningRedBlackTree(BinarySearchTree):
+
+	"""A symbol table implemented using a binary search tree."""
 
 	def search(self, key):
 		"""Return value associated with `key`; `None` if `key` not contained."""
