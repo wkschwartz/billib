@@ -65,12 +65,12 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 				if self._left is None:
 					self._left = self.__class__(key, value)
 				else:
-					self._left = self._left._insert(key, value)
+					self._left = self._left.insert(key, value)
 			else:
 				if self._right is None:
 					self._right = self.__class__(key, value)
 				else:
-					self._right = self._right._insert(key, value)
+					self._right = self._right.insert(key, value)
 			isred = self._isred
 			if isred(self._right) and not isred(self._left):
 				self = self._rotate_left()
