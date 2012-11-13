@@ -42,5 +42,11 @@ class TestLeftLeaningRedBlackTree(unittest.TestCase):
 		self.assertRaises(TypeError, t.search, {2})
 		self.assertRaises(TypeError, t.insert, {2})
 
+	def test_unhashable_keys(self):
+		t = self.cls()
+		for k in [], [1], [2]:
+			t.insert(k, 'a')
+			self.assertEqual(t.search(k), 'a')
+
 if __name__ == '__main__':
 	unittest.main()
