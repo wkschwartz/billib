@@ -11,17 +11,17 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 	http://algs4.cs.princeton.edu/33balanced/RedBlackBST.java.html.
 	"""
 
-	_RED = True
-	_BLACK = False
-
 	class _Node:
 
 		"""BST helper node data type."""
 
+		_RED = True
+		_BLACK = False
+
 		def __init__(self, key, value):
 			self._key = key
 			self._value = value
-			self._color = LeftLeaningRedBlackTree._RED
+			self._color = self._RED
 			self._left = self._right = None
 
 		def __len__(self):
@@ -38,25 +38,28 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 				for item in self._right:
 					yield item
 
-		@classmethod
-		def _insert(cls, h, key, value):
-			"""Recursively insert the key-value pair in the subtree rooted at `h`."""
-			if h is None:
-				return cls(key, value)
-			if key == h._key:
-				h._value = value
-			elif key < h._key:
-				h._left = cls._insert(h._left, key, value)
+		def _insert(self, key, value):
+			"""Recursively insert the key-value pair in the subtree rooted at `self`."""
+			if key == self._key:
+				self._value = value
+			elif key < self._key:
+				if self._left is None:
+					self._left = self.__class__(key, value)
+				else:
+					self._left = self._left._insert(key, value)
 			else:
-				h._right = cls._insert(h._right, key, value)
-			isred = cls._isred
-			if isred(h._right) and not isred(h._left):
-				h = h._rotate_left()
-			if isred(h._left) and isred(h._left._left):
-				h = cls._rotate_right(h)
-			if isred(h._left) and isred(h._right):
-				cls._flip_colors(h)
-			return h
+				if self._right is None:
+					self._right = self.__class__(key, value)
+				else:
+					self._right = self._right._insert(key, value)
+			isred = self._isred
+			if isred(self._right) and not isred(self._left):
+				self = self._rotate_left()
+			if isred(self._left) and isred(self._left._left):
+				self = self._rotate_right()
+			if isred(self._left) and isred(self._right):
+				self._flip_colors()
+			return self
 
 		#### Red-black helper methods ####
 
@@ -66,7 +69,7 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 			self._right = x._left
 			x._left = self
 			x._color = self._color
-			self._color = LeftLeaningRedBlackTree._RED
+			self._color = self._RED
 			return x
 
 		def _rotate_right(self):
@@ -75,7 +78,7 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 			self._left = x._right
 			x._right = self
 			x._color = self._color
-			self._color = LeftLeaningRedBlackTree._RED
+			self._color = self._RED
 			return x
 
 		def _flip_colors(self):
@@ -89,7 +92,7 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 			"""Return whether node `h` is red; False if `h` is `None`."""
 			if h is None:
 				return False
-			return h._color == LeftLeaningRedBlackTree._RED
+			return h._color == cls._RED
 
 	def __init__(self):
 		"""Instantiate new empty BST."""
@@ -125,5 +128,8 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 
 	def insert(self, key, value):
 		"""Insert the key-value pair; overwrite value if key already present."""
-		self._root = self._Node._insert(self._root, key, value)
-		self._root._color = self._BLACK
+		if self._root is None:
+			self._root = self._Node(key, value)
+		else:
+			self._root = self._root._insert(key, value)
+		self._root._color = self._Node._BLACK
