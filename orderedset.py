@@ -57,7 +57,7 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 					x = x._right
 			raise KeyError(key)
 
-		def _insert(self, key, value):
+		def insert(self, key, value):
 			"""Recursively insert the key-value pair in the subtree rooted at `self`."""
 			if key == self._key:
 				self._value = value
