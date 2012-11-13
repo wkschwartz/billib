@@ -35,5 +35,12 @@ class TestLeftLeaningRedBlackTree(unittest.TestCase):
 			self.assertRaises(TypeError, t.search, k, 'a')
 			self.assertRaises(TypeError, t.insert, k, 'a')
 
+	def test_disjoint_keys(self):
+		t = self.cls()
+		t.insert({1}, 'a')
+		self.assertRaises(KeyError, t.search, set())
+		self.assertRaises(TypeError, t.search, {2})
+		self.assertRaises(TypeError, t.insert, {2})
+
 if __name__ == '__main__':
 	unittest.main()

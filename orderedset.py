@@ -60,6 +60,9 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 					x = x._left
 				elif key > x._key:
 					x = x._right
+				else:
+					raise TypeError("{.__name__!r} can't contain unorderable keys of "
+									"type {.__name__!r}".format(type(self), type(key)))
 			raise KeyError(key)
 
 		def insert(self, key, value):
@@ -71,11 +74,14 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 					self._left = self.__class__(key, value)
 				else:
 					self._left = self._left.insert(key, value)
-			else:
+			elif key > self._key:
 				if self._right is None:
 					self._right = self.__class__(key, value)
 				else:
 					self._right = self._right.insert(key, value)
+			else:
+				raise TypeError("{.__name__!r} can't contain unorderable keys of "
+								"type {.__name__!r}".format(type(self), type(key)))
 			isred = self._isred
 			if isred(self._right) and not isred(self._left):
 				self = self._rotate_left()
