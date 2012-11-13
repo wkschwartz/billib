@@ -38,6 +38,25 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 				for item in self._right:
 					yield item
 
+		def __contains__(self, key):
+			try:
+				self.search(key)
+			except KeyError:
+				return False
+			return True
+
+		def search(self, key):
+			"""Return value associated with `key`; `None` if `key` not contained."""
+			x = self
+			while x is not None:
+				if key == x._key:
+					return x._value
+				elif key < x._key:
+					x = x._left
+				elif key > x._key:
+					x = x._right
+			raise KeyError(key)
+
 		def _insert(self, key, value):
 			"""Recursively insert the key-value pair in the subtree rooted at `self`."""
 			if key == self._key:
@@ -102,11 +121,9 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 		return 0 if self._root is None else len(self._root)
 
 	def __contains__(self, key):
-		try:
-			self.search(key)
-		except KeyError:
+		if self._root is None:
 			return False
-		return True
+		return key in self._root
 
 	def __iter__(self):
 		if self._root is None:
@@ -116,15 +133,9 @@ class LeftLeaningRedBlackTree(Sized, Iterable, Container):
 
 	def search(self, key):
 		"""Return value associated with `key`; `None` if `key` not contained."""
-		x = self._root
-		while x is not None:
-			if key == x._key:
-				return x._value
-			elif key < x._key:
-				x = x._left
-			elif key > x._key:
-				x = x._right
-		raise KeyError(key)
+		if self._root is None:
+			raise KeyError(key)
+		return self._root.search(key)
 
 	def insert(self, key, value):
 		"""Insert the key-value pair; overwrite value if key already present."""
