@@ -1,5 +1,6 @@
 import unittest
 import orderedset
+import random
 
 class TestLeftLeaningRedBlackTree(unittest.TestCase):
 
@@ -9,18 +10,27 @@ class TestLeftLeaningRedBlackTree(unittest.TestCase):
 
 	def test_int_keys_in_order(self):
 		for i in range(len(self.data)):
-			t = self.cls()
+			self._int_keys(self.data[:i])
+
+	def test_int_keys_rand_order(self):
+		for i in range(len(self.data)):
 			data = list(self.data[:i])
-			for j in range(i):
-				self.assertEqual(j, len(t))
-				self.assertNotIn(j, t)
-				self.assertEqual(list(range(j)), list(t))
-				t.insert(j, data[j])
-				self.assertEqual(data[j], t.search(j))
-				self.assertIn(j, t)
-			self.assertEqual(i, len(t))
-			self.assertEqual(list(range(len(data))), list(t))
-			self.assertRaises(KeyError, t.search, i + 1)
+			random.shuffle(data)
+			self._int_keys(data)
+
+	def _int_keys(self, data):
+		t = self.cls()
+		i = len(data)
+		for j in range(i):
+			self.assertEqual(j, len(t))
+			self.assertNotIn(j, t)
+			self.assertEqual(list(range(j)), list(t))
+			t.insert(j, data[j])
+			self.assertEqual(data[j], t.search(j))
+			self.assertIn(j, t)
+		self.assertEqual(i, len(t))
+		self.assertEqual(list(range(len(data))), list(t))
+		self.assertRaises(KeyError, t.search, i + 1)
 
 	def test_insert_replaces(self):
 		t = self.cls()
