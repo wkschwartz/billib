@@ -171,7 +171,7 @@ class OrderedMapping(BinarySearchTree, Mapping):
 			try:
 				k, v = item
 			except TypeError:
-				raise TypeError('{.__name__!r must be initialized with mappings'
+				raise TypeError('{.__name__!r} must be initialized with mappings'
 								' or iterables of pairs.'.format(type(self)))
 			self[k] = v
 
