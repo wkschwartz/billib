@@ -12,6 +12,20 @@ class _Node(Sized, Iterable, Container):
 	_RED = True
 	_BLACK = False
 
+	class Null(Sized, Iterable, Container):
+
+		"Drop-in dummy `_Node`"
+
+		def __len__(self): return 0
+		def __iter__(self): return iter([])
+		def __contains__(self, key): return False
+		def search(self, key): raise KeyError(key)
+
+		def insert(self, key, value):
+			n = _Node(key, value)
+			n._color = _Node._BLACK
+			return n
+
 	def __init__(self, key, value):
 		try:
 			key < key
@@ -124,28 +138,13 @@ class _Node(Sized, Iterable, Container):
 		return h._color == cls._RED
 
 
-class _Null(Sized, Iterable, Container):
-
-	"Drop-in dummy `_Node`"
-
-	def __len__(self): return 0
-	def __iter__(self): return iter([])
-	def __contains__(self, key): return False
-	def search(self, key): raise KeyError(key)
-
-	def insert(self, key, value):
-		n = _Node(key, value)
-		n._color = _Node._BLACK
-		return n
-
-
 class BinarySearchTree(Sized, Iterable, Container):
 
 	"Abstract binary search tree. This class is only useful for sublcassing."
 
 	def __init__(self):
 		"""Instantiate new empty BST."""
-		self._root = _Null()
+		self._root = _Node.Null()
 
 	def __len__(self): return len(self._root)
 	def __contains__(self, key): return key in self._root
