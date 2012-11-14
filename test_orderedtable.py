@@ -84,6 +84,17 @@ class TestBinarySearchTree(unittest.TestCase):
 			t._insert(k, 'a')
 			self.assertEqual(t._search(k), 'a')
 
+	def test_min_max(self):
+		t = self.cls()
+		self.assertRaises(ValueError, t.min)
+		self.assertRaises(ValueError, t.max)
+		data = list(self.data)
+		random.shuffle(data)
+		for item in data:
+			t._insert(item, ord(item))
+		self.assertEqual(min(data), t.min())
+		self.assertEqual(max(data), t.max())
+
 
 class TestOrderedMapping(unittest.TestCase):
 

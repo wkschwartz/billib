@@ -43,6 +43,8 @@ class _Node(Sized, Iterable, Container):
 		def __len__(self): return 0
 		def __iter__(self): return iter([])
 		def __contains__(self, key): return False
+		def min(self): raise ValueError('No min of an empty container.')
+		def max(self): raise ValueError('No max of an empty container.')
 		def height(self): return 0
 		def search(self, key): raise KeyError(key)
 
@@ -143,6 +145,20 @@ class _Node(Sized, Iterable, Container):
 		if isred(self._left) and isred(self._right):
 			self._flip_colors()
 		return self
+
+	#### Ordered symbol table methods ####
+
+	def min(self):
+		"Return the least key."
+		if self._left is None:
+			return self._key
+		return self._left.min()
+
+	def max(self):
+		"Return the greatest key."
+		if self._right is None:
+			return self._key
+		return self._right.max()
 
 	#### Red-black helper methods ####
 
@@ -259,6 +275,14 @@ class BinarySearchTree(Sized, Iterable, Container):
 	def _insert(self, key, value):
 		"Insert the key-value pair, replacing if key already present."
 		self._root = self._root.insert(key, value)
+
+	def min(self):
+		"Return the least key."
+		return self._root.min()
+
+	def max(self):
+		"Return the greatest key."
+		return self._root.max()
 
 
 class OrderedSymbolTable(BinarySearchTree):
