@@ -5,10 +5,10 @@ import sys
 
 RECURSION_LIMIT = sys.getrecursionlimit()
 
-class TestLeftLeaningRedBlackTree(unittest.TestCase):
+class TestBinarySearchTree(unittest.TestCase):
 
 	def setUp(self):
-		self.cls = orderedset.OrderedMapping
+		self.cls = orderedset.BinarySearchTree
 		self.data = tuple(chr(i + 0x20) for i in range(95))
 
 	def test_int_keys_in_order(self):
@@ -28,38 +28,38 @@ class TestLeftLeaningRedBlackTree(unittest.TestCase):
 			self.assertEqual(j, len(t))
 			self.assertNotIn(j, t)
 			self.assertEqual(list(range(j)), list(t))
-			t[j] = data[j]
-			self.assertEqual(data[j], t[j])
+			t._insert(j, data[j])
+			self.assertEqual(data[j], t._search(j))
 			self.assertIn(j, t)
 		self.assertEqual(i, len(t))
 		self.assertEqual(list(range(len(data))), list(t))
-		self.assertRaises(KeyError, t.__getitem__, i + 1)
+		self.assertRaises(KeyError, t._search, i + 1)
 
 	def test_insert_replaces(self):
 		t = self.cls()
-		t[1] = 'a'
-		self.assertEqual('a', t[1])
-		t[1] = 'b'
-		self.assertEqual('b', t[1])
+		t._insert(1, 'a')
+		self.assertEqual('a', t._search(1))
+		t._insert(1, 'b')
+		self.assertEqual('b', t._search(1))
 
 	def test_only_ordered_keys(self):
 		t = self.cls()
 		for k in None, object(), type, {}:
-			self.assertRaises(TypeError, t.__getitem__, k, 'a')
-			self.assertRaises(TypeError, t.__setitem__, k, 'a')
+			self.assertRaises(TypeError, t._search, k, 'a')
+			self.assertRaises(TypeError, t._insert, k, 'a')
 
 	def test_disjoint_keys(self):
 		t = self.cls()
-		t[{1}] = 'a'
-		self.assertRaises(KeyError, t.__getitem__, set())
-		self.assertRaises(TypeError, t.__getitem__, {2})
-		self.assertRaises(TypeError, t.__setitem__, {2})
+		t._insert({1}, 'a')
+		self.assertRaises(KeyError, t._search, set())
+		self.assertRaises(TypeError, t._search, {2})
+		self.assertRaises(TypeError, t._insert, {2})
 
 	def test_unhashable_keys(self):
 		t = self.cls()
 		for k in [], [1], [2]:
-			t[k] = 'a'
-			self.assertEqual(t[k], 'a')
+			t._insert(k, 'a')
+			self.assertEqual(t._search(k), 'a')
 
 
 class TestOrderedMapping(unittest.TestCase):

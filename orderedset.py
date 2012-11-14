@@ -186,6 +186,20 @@ class BinarySearchTree(Sized, Iterable, Container):
 		self._root = self._root.insert(key, value)
 
 
+class OrderedSymbolTable(BinarySearchTree):
+
+	"""A symbol table implemented using a binary search tree."""
+
+	def search(self, key):
+		"""Return value associated with `key`; `None` if `key` not contained."""
+		return self._root.search(key)
+
+	def insert(self, key, value):
+		"""Insert the key-value pair; overwrite value if key already present."""
+		self._root = self._root.insert(key, value)
+		self._root._color = _Node._BLACK
+
+
 class OrderedMapping(BinarySearchTree, Mapping):
 
 	"Mapping of totally ordered keys, which need not be hashable."
