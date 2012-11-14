@@ -45,6 +45,8 @@ class _Node(Sized, Iterable, Container):
 		def __contains__(self, key): return False
 		def min(self): raise ValueError('No min of an empty container.')
 		def max(self): raise ValueError('No max of an empty container.')
+		def floor(self, key): raise KeyError(key)
+		def ceiling(self, key): raise KeyError(key)
 		def height(self): return 0
 		def search(self, key): raise KeyError(key)
 
@@ -159,6 +161,44 @@ class _Node(Sized, Iterable, Container):
 		if self._right is None:
 			return self._key
 		return self._right.max()
+
+	def floor(self, key):
+		"Return the largest key <= the given key. Raise a KeyError if none present."
+		if key == self._key:
+			return self._key
+		elif key < self._key:
+			if self._left is None:
+				raise KeyError(key)
+			return self._left.floor(key)
+		elif key > self._key:
+			if self._right is None:
+				return self._key
+			try:
+				t = self._right.floor(key)
+			except KeyError:
+				return self._key
+			return t
+		else:
+			raise TypeError('Key %r not in a total order' % key)
+
+	def ceiling(self, key):
+		"Return the least key >= the given key. Raise a KeyError if none present."
+		if key == self._key:
+			return self._key
+		elif key > self._key:
+			if self._right is None:
+				raise KeyError(key)
+			return self._right.ceiling(key)
+		elif key < self._key:
+			if self._left is None:
+				return self._key
+			try:
+				t = self._left.ceiling(key)
+			except KeyError:
+				return self._key
+			return t
+		else:
+			raise TypeError('Key %r not in a total order' % key)
 
 	#### Red-black helper methods ####
 
@@ -284,6 +324,13 @@ class BinarySearchTree(Sized, Iterable, Container):
 		"Return the greatest key."
 		return self._root.max()
 
+	def floor(self, key):
+		"Return the greatest key <= the given key. Raise a KeyError if none present."
+		return self._root.floor(key)
+
+	def ceiling(self, key):
+		"Return the least key >= the given key. Raise a KeyError if none present."
+		return self._root.ceiling(key)
 
 class OrderedSymbolTable(BinarySearchTree):
 

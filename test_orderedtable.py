@@ -95,6 +95,23 @@ class TestBinarySearchTree(unittest.TestCase):
 		self.assertEqual(min(data), t.min())
 		self.assertEqual(max(data), t.max())
 
+	def test_floor_ceiling(self):
+		t = self.cls()
+		self.assertRaises(KeyError, t.floor, 10)
+		self.assertRaises(KeyError, t.ceiling, 10)
+		for i in -1, 5, 10:
+			t._insert(i, range(i))
+		for i, f in {100: 10, 10.00001: 10, 10: 10, 9.9999: 5, 8: 5, 5: 5, 0: -1,
+					 -0.99999: -1, -1: -1}.items():
+			self.assertEqual(f, t.floor(i))
+		self.assertRaises(KeyError, t.floor, -1.000001)
+		self.assertRaises(KeyError, t.floor, -10)
+		for i, c in {-10: -1, -1.000001: -1, -1: -1, -0.99999: 5, 2: 5, 5: 5,
+					 9: 10, 9.999999: 10, 10: 10}.items():
+			self.assertEqual(c, t.ceiling(i))
+		self.assertRaises(KeyError, t.ceiling, 10.000001)
+		self.assertRaises(KeyError, t.ceiling, 11)
+
 
 class TestOrderedMapping(unittest.TestCase):
 
