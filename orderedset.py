@@ -263,6 +263,6 @@ class OrderedSet(BinarySearchTree, Set):
 			self.add(value)
 		return self
 
-	def find(self, item):
+	def search(self, item):
 		"If there is an equal item in self, return it. Else raise KeyError."
 		return self._search(item)

@@ -152,7 +152,7 @@ class TestOrderedSet(unittest.TestCase):
 		self.assertEqual(len(contents), len(s))
 		for i in contents:
 			self.assertIn(i, s)
-			self.assertEqual(i, s.find(i))
+			self.assertEqual(i, s.search(i))
 		count = 0
 		for i in s:
 			self.assertIn(i, contents)
