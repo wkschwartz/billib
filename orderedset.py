@@ -1,4 +1,4 @@
-from collections.abc import Sized, Iterable, Container
+from collections.abc import Sized, Iterable, Container, Mapping
 
 class _Node(Sized, Iterable, Container):
 
@@ -153,5 +153,44 @@ class OrderedSymbolTable(BinarySearchTree):
 
 	def insert(self, key, value):
 		"""Insert the key-value pair; overwrite value if key already present."""
+		self._root = self._root.insert(key, value)
+		self._root._color = _Node._BLACK
+
+
+class OrderedMapping(BinarySearchTree, Mapping):
+
+	"Mapping of totally ordered keys, which need not be hashable."
+
+	def __init__(self, iterable=()):
+		"""Instantiate a new OrderedMapping optionally with key-value pairs.
+
+		The optional argument `iterable` has the same semantics as it does for
+		the `update` method.
+		"""
+		super().__init__()
+		self.update(iterable)
+
+	def update(self, iterable=()):
+		"""Update self with new or replacement values from `iterable`.
+
+		`iterable` is an optional argument  that is either a mapping or is an
+		iterable containing two-item iterables: The first item is the key and
+		the second the value. The `OrderedMapping` will contain these key-value
+		pairs. If keys are repeated, later copies replace earlier ones. The keys
+		must be totally ordered but they need not be hashable.
+		"""
+		if isinstance(iterable, Mapping):
+			iterable = iterable.items()
+		for item in iterable:
+			try:
+				k, v = item
+			except TypeError:
+				raise TypeError('{.__name__!r must be initialized with mappings'
+								' or iterables of pairs.'.format(type(self)))
+			self[k] = v
+
+	def __getitem__(self, key): return self._root.search(key)
+
+	def __setitem__(self, key, value):
 		self._root = self._root.insert(key, value)
 		self._root._color = _Node._BLACK
