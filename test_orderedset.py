@@ -94,13 +94,12 @@ class TestOrderedMapping(unittest.TestCase):
 
 	def test_create_empty_and_add(self):
 		m = self.cls()
-		self.assert_contents(m, {})
-		m[1] = 'a'
-		self.assert_contents(m, {1: 'a'})
-		m[2] = 'b'
-		self.assert_contents(m, {1: 'a', 2: 'b'})
-		m[1] = 'c'
-		self.assert_contents(m, {1: 'c', 2: 'b'})
+		contents = {}
+		self.assert_contents(m, contents)
+		for k, v in self.data[:100]:
+			m[k] = v
+			contents[k] = v
+			self.assert_contents(m, contents)
 
 	def test_init_with_dict(self):
 		d = dict(self.data)
