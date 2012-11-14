@@ -67,12 +67,9 @@ class TestOrderedMapping(unittest.TestCase):
 
 	def assert_contents(self, m, contents):
 		self.assertEqual(len(contents), len(m))
-		count = 0
 		for k, v in contents.items():
 			self.assertIn(k, m)
 			self.assertEqual(v, m[k])
-			count += 1
-		self.assertEqual(count, len(contents))
 		count = 0
 		for k in m:
 			self.assertIn(k, contents)
