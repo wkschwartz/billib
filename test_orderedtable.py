@@ -215,6 +215,13 @@ class TestOrderedSet(unittest.TestCase):
 		s = self.cls()
 		self.assertRaises(TypeError, self.cls.__ior__, 1)
 
+	def test_sort(self):
+		data = list(range(2 * RECURSION_LIMIT))
+		rnddata = list(data)
+		random.shuffle(rnddata)
+		self.assertNotEqual(data, rnddata)
+		self.assertEqual(data, list(self.cls(rnddata)))
+
 
 if __name__ == '__main__':
 	unittest.main()
