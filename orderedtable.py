@@ -7,6 +7,10 @@ data types support the mapping and set interfaces respectively. They do not
 
 You may create your own ordered symbol table client interface by subclassing the
 `BinarySearchTree` class.
+
+Note that the BST code has been instrumented with very thorough -- but very
+slow -- integrity checks. These are turned off when Python is run with
+optimizations turned on (e.g., by the -O command line switch).
 """
 
 
@@ -25,7 +29,8 @@ class _Node(Sized, Iterable, Container):
 	This code is adapted to Python from the Java code given in "Left-leaning
 	Red-Black Trees", Robert Sedgewick,
 	http://www.cs.princeton.edu/~rs/talks/LLRB/LLRB.pdf. See also the code at
-	http://algs4.cs.princeton.edu/33balanced/RedBlackBST.java.html.
+	http://algs4.cs.princeton.edu/33balanced/RedBlackBST.java.html, some of
+	whose comments were cribbed.
 	"""
 
 	_RED = True
@@ -44,6 +49,7 @@ class _Node(Sized, Iterable, Container):
 		def insert(self, key, value):
 			n = _Node(key, value)
 			n._color = _Node._BLACK
+			if __debug__: n._check()
 			return n
 
 	def __new__(cls, *args):
@@ -110,6 +116,7 @@ class _Node(Sized, Iterable, Container):
 		"Recursively insert the key-value pair in the subtree rooted at `self`."
 		self = self._insert(key, value)
 		self._color = self._BLACK
+		if __debug__: self._check()
 		return self
 
 	def _insert(self, key, value):
@@ -172,6 +179,60 @@ class _Node(Sized, Iterable, Container):
 		if h is None:
 			return False
 		return h._color == cls._RED
+
+	####  Check integrity of red-black BST data structure	####
+
+	class NodeError(ValueError): pass
+
+	def _check(self):
+		"Check integrity of red-black BST data structure."
+		if not self._is_BST(): raise self.NodeError("Not in symmetric order")
+		if not self._is_23(): raise self.NodeError("Not a 2-3 tree")
+		if not self._is_balanced(): raise self.NodeError("Not balanced")
+
+	def _is_BST(self, min=None, max=None):
+		"""Return whether this binary tree satisfies symmetric order.
+
+		More specifically, return wehther the tree rooted at `self` a BST with
+		all keys strictly between `min` and `max`. When those arguments aren't
+		given (or they are `None`), this constraint is treated as non-binding.
+		Thus, to test the root of a tree, call without argument. Credit: Bob
+		Dondero.
+		"""
+		if min is not None and self._key <= min: return False
+		if max is not None and self._key >= max: return False
+		return ((self._left is None or self._left._is_BST(min, self._key)) and
+				(self._right is None or self._right._is_BST(self._key, max)))
+
+	def _is_23(self):
+		"""Return wehther this tree properly models a 2-3 tree with red and black.
+
+		Specifically, return wether the tree rooted at `self` has no red right
+		links and at most one (left) red links in a row on any path.
+		"""
+		isred = self._isred
+		if isred(self._right): return False
+		if isred(self) and isred(self._left): return False
+		return ((self._left is None or self._left._is_23()) and
+				(self._right is None or self._right._is_23()))
+
+	def _is_balanced(self):
+		"Return whether all paths self to leaf have the same number of black edges."
+		black = 0
+		x = self
+		while x is not None:
+			if x._color != x._RED:
+				black += 1
+			x = x._left
+		return self._is_balanced_all_paths(black)
+
+	def _is_balanced_all_paths(self, black):
+		"Return whether every path from root to leaf has the given number of black links"
+		if self._color != self._RED:
+			black -= 1
+		l = black == 0 if self._left is None else self._left._is_balanced_all_paths(black)
+		r = black == 0 if self._right is None else self._right._is_balanced_all_paths(black)
+		return l and r
 
 
 class BinarySearchTree(Sized, Iterable, Container):
