@@ -12,7 +12,7 @@ class _Node(Sized, Iterable, Container):
 	_RED = True
 	_BLACK = False
 
-	class Null(Sized, Iterable, Container):
+	class _NullNode(Sized, Iterable, Container):
 
 		"Drop-in dummy `_Node`"
 
@@ -25,6 +25,14 @@ class _Node(Sized, Iterable, Container):
 			n = _Node(key, value)
 			n._color = _Node._BLACK
 			return n
+
+	def __new__(cls, *args):
+		if args and len(args) != 2:
+			raise TypeError('%s() takes at most 3 arguments (%r given)' %
+							(cls.__name__, len(args)))
+		elif args:
+			return super().__new__(cls)
+		return cls._NullNode()
 
 	def __init__(self, key, value):
 		try:
@@ -144,7 +152,7 @@ class BinarySearchTree(Sized, Iterable, Container):
 
 	def __init__(self):
 		"""Instantiate new empty BST."""
-		self._root = _Node.Null()
+		self._root = _Node()
 
 	def __len__(self): return len(self._root)
 	def __contains__(self, key): return key in self._root
