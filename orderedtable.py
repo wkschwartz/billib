@@ -38,6 +38,7 @@ class _Node(Sized, Iterable, Container):
 		def __len__(self): return 0
 		def __iter__(self): return iter([])
 		def __contains__(self, key): return False
+		def height(self): return 0
 		def search(self, key): raise KeyError(key)
 
 		def insert(self, key, value):
@@ -84,6 +85,11 @@ class _Node(Sized, Iterable, Container):
 		except KeyError:
 			return False
 		return True
+
+	def height(self):
+		l = 0 if self._left is None else self._left.height()
+		r = 0 if self._right is None else self._right.height()
+		return 1 + max(l, r)
 
 	def search(self, key):
 		"Return value associated with `key`; Raise `KeyError` if key not found."
