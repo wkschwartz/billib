@@ -1,5 +1,5 @@
 import unittest
-import orderedset
+import orderedtable
 import random
 import sys
 
@@ -8,7 +8,7 @@ RECURSION_LIMIT = sys.getrecursionlimit()
 class TestBinarySearchTree(unittest.TestCase):
 
 	def setUp(self):
-		self.cls = orderedset.BinarySearchTree
+		self.cls = orderedtable.BinarySearchTree
 		self.data = tuple(chr(i + 0x20) for i in range(95))
 
 	def test_int_keys_in_order(self):
@@ -65,7 +65,7 @@ class TestBinarySearchTree(unittest.TestCase):
 class TestOrderedMapping(unittest.TestCase):
 
 	def setUp(self):
-		self.cls = orderedset.OrderedMapping
+		self.cls = orderedtable.OrderedMapping
 		self.data = [(i, chr(i)) for i in range(2 * RECURSION_LIMIT)]
 
 	def assert_contents(self, m, contents):
@@ -145,7 +145,7 @@ class TestOrderedMapping(unittest.TestCase):
 class TestOrderedSet(unittest.TestCase):
 
 	def setUp(self):
-		self.cls = orderedset.OrderedSet
+		self.cls = orderedtable.OrderedSet
 		self.data = list(range(2 * RECURSION_LIMIT))
 
 	def assert_contents(self, s, contents):
