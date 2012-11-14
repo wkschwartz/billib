@@ -332,19 +332,6 @@ class BinarySearchTree(Sized, Iterable, Container):
 		"Return the least key >= the given key. Raise a KeyError if none present."
 		return self._root.ceiling(key)
 
-class OrderedSymbolTable(BinarySearchTree):
-
-	"""A symbol table implemented using a binary search tree."""
-
-	def search(self, key):
-		"""Return value associated with `key`; `None` if `key` not contained."""
-		return self._root.search(key)
-
-	def insert(self, key, value):
-		"""Insert the key-value pair; overwrite value if key already present."""
-		self._root = self._root.insert(key, value)
-		self._root._color = _Node._BLACK
-
 
 class OrderedMapping(BinarySearchTree, Mapping):
 
