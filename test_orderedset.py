@@ -1,6 +1,9 @@
 import unittest
 import orderedset
 import random
+import sys
+
+RECURSION_LIMIT = sys.getrecursionlimit()
 
 class TestLeftLeaningRedBlackTree(unittest.TestCase):
 
@@ -63,7 +66,7 @@ class TestOrderedMapping(unittest.TestCase):
 
 	def setUp(self):
 		self.cls = orderedset.OrderedMapping
-		self.data = [(i, chr(i)) for i in range(1000)]
+		self.data = [(i, chr(i)) for i in range(2 * RECURSION_LIMIT)]
 
 	def assert_contents(self, m, contents):
 		self.assertEqual(len(contents), len(m))
@@ -143,7 +146,7 @@ class TestOrderedSet(unittest.TestCase):
 
 	def setUp(self):
 		self.cls = orderedset.OrderedSet
-		self.data = list(range(1000))
+		self.data = list(range(2 * RECURSION_LIMIT))
 
 	def assert_contents(self, s, contents):
 		self.assertEqual(len(contents), len(s))
