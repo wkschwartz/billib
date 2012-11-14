@@ -148,7 +148,8 @@ class _Node(Sized, Iterable, Container):
 
 	def _rotate_left(self):
 		"""Make a right-leaning link `self` lean to the left."""
-		assert self._right._color == self._RED
+		if __debug__:
+			if not (self._right._color == self._RED): raise self.NodeError
 		x = self._right
 		self._right = x._left
 		x._left = self
@@ -158,7 +159,8 @@ class _Node(Sized, Iterable, Container):
 
 	def _rotate_right(self):
 		"""Make a left-leaning link `self` lean to the right."""
-		assert self._left._color == self._RED
+		if __debug__:
+			if not (self._left._color == self._RED): raise self.NodeError
 		x = self._left
 		self._left = x._right
 		x._right = self
@@ -168,7 +170,9 @@ class _Node(Sized, Iterable, Container):
 
 	def _flip_colors(self):
 		"""Flip the colors of a node `self` and its two children."""
-		assert self._color != self._left._color == self._right._color
+		if __debug__:
+			if not (self._color != self._left._color == self._right._color):
+				raise self.NodeError
 		self._color = not self._color
 		self._left._color = not self._left._color
 		self._right._color = not self._right._color
@@ -182,7 +186,8 @@ class _Node(Sized, Iterable, Container):
 
 	####  Check integrity of red-black BST data structure	####
 
-	class NodeError(ValueError): pass
+	class NodeError(AssertionError):
+		"A left-leaning red-black tree invariant has been violated unexpectedly."
 
 	def _check(self):
 		"Check integrity of red-black BST data structure."
