@@ -139,6 +139,56 @@ class TestOrderedMapping(unittest.TestCase):
 		self.assertRaises(TypeError, m.__setitem__, [1, 2, 3])
 
 
+class TestOrderedSet(unittest.TestCase):
+
+	def setUp(self):
+		self.cls = orderedset.OrderedSet
+		self.data = list(range(1000))
+
+	def assert_contents(self, s, contents):
+		self.assertEqual(len(contents), len(s))
+		for i in contents:
+			self.assertIn(i, s)
+			self.assertEqual(i, s.find(i))
+		count = 0
+		for i in s:
+			self.assertIn(i, contents)
+			count += 1
+		self.assertEqual(count, len(contents))
+
+	def test_create_empty_and_add(self):
+		s = self.cls()
+		contents = set()
+		self.assert_contents(s, contents)
+		for i in self.data[:100]:
+			s.add(i)
+			contents.add(i)
+			self.assert_contents(s, contents)
+
+	def test_init_with_list(self):
+		s = self.cls(self.data)
+		self.assert_contents(s, self.data)
+
+	def test_create_empty_update_list(self):
+		s = self.cls()
+		self.assert_contents(s, [])
+		s |= self.data
+		self.assert_contents(s, self.data)
+
+	def test_init_with_data_then_update(self):
+		data_start = set(self.data[:3*len(self.data)//4])
+		data_update = set(self.data[2*len(self.data)//4:])
+		s = self.cls(data_start)
+		self.assert_contents(s, data_start)
+		s |= data_update
+		data_start |= data_update
+		self.assert_contents(s, data_start)
+
+	def test_bad_data(self):
+		self.assertRaises(TypeError, self.cls, 1)
+		s = self.cls()
+		self.assertRaises(TypeError, self.cls.__ior__, 1)
+
 
 if __name__ == '__main__':
 	unittest.main()

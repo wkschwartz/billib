@@ -1,4 +1,4 @@
-from collections.abc import Sized, Iterable, Container, Mapping
+from collections.abc import Sized, Iterable, Container, Mapping, Set
 
 class _Node(Sized, Iterable, Container):
 
@@ -180,3 +180,34 @@ class OrderedMapping(BinarySearchTree, Mapping):
 	def __setitem__(self, key, value):
 		self._root = self._root.insert(key, value)
 		self._root._color = _Node._BLACK
+
+
+class OrderedSet(BinarySearchTree, Set):
+
+	"Set of totally ordered values, which need not be hashable."
+
+	def __init__(self, iterable=()):
+		"""Instantiate a new OrderedSet, optionally with values.
+
+		`iterable` is an optional argument containing an iterable of values to
+		fill up the new `OrderedSet`. If values are repeated (in terms of
+		equality but not identity), later values replace earlier ones. The
+		values must be totally ordered but they need not be hashable.
+		"""
+		super().__init__()
+		self |= iterable
+
+	def add(self, item):
+		"Add an item to the set, replacing older items that are equal."
+		self._root = self._root.insert(item, item)
+		self._root._color = _Node._BLACK
+
+	def __ior__(self, other):
+		"Update self with new and replacement values from other (in-place union)."
+		for value in other:
+			self.add(value)
+		return self
+
+	def find(self, item):
+		"If there is an equal item in self, return it. Else raise KeyError."
+		return self._root.search(item)
