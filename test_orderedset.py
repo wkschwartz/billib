@@ -123,6 +123,22 @@ class TestOrderedMapping(unittest.TestCase):
 		m.update(self.data)
 		self.assert_contents(m, dict(self.data))
 
+	def test_init_with_data_then_update(self):
+		data_start = dict(self.data[:3*len(self.data)//4])
+		data_update = dict(self.data[2*len(self.data)//4:])
+		m = self.cls(data_start)
+		self.assert_contents(m, data_start)
+		m.update(data_update)
+		data_start.update(data_update)
+		self.assert_contents(m, data_start)
+
+	def test_bad_data(self):
+		self.assertRaises(TypeError, self.cls, [1, 2, 3])
+		m = self.cls()
+		self.assertRaises(TypeError, m.update, [1, 2, 3])
+		self.assertRaises(TypeError, m.__setitem__, [1, 2, 3])
+
+
 
 if __name__ == '__main__':
 	unittest.main()
