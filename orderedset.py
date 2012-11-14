@@ -61,18 +61,23 @@ class _Node(Sized, Iterable, Container):
 
 	def insert(self, key, value):
 		"""Recursively insert the key-value pair in the subtree rooted at `self`."""
+		self = self._insert(key, value)
+		self._color = self._BLACK
+		return self
+
+	def _insert(self, key, value):
 		if key == self._key:
 			self._value = value
 		elif key < self._key:
 			if self._left is None:
 				self._left = self.__class__(key, value)
 			else:
-				self._left = self._left.insert(key, value)
+				self._left = self._left._insert(key, value)
 		elif key > self._key:
 			if self._right is None:
 				self._right = self.__class__(key, value)
 			else:
-				self._right = self._right.insert(key, value)
+				self._right = self._right._insert(key, value)
 		else:
 			raise TypeError("{.__name__!r} can't contain unorderable keys of "
 							"type {.__name__!r}".format(type(self), type(key)))
@@ -127,7 +132,11 @@ class _Null(Sized, Iterable, Container):
 	def __iter__(self): return iter([])
 	def __contains__(self, key): return False
 	def search(self, key): raise KeyError(key)
-	def insert(self, key, value): return _Node(key, value)
+
+	def insert(self, key, value):
+		n = _Node(key, value)
+		n._color = _Node._BLACK
+		return n
 
 
 class BinarySearchTree(Sized, Iterable, Container):
@@ -179,7 +188,6 @@ class OrderedMapping(BinarySearchTree, Mapping):
 
 	def __setitem__(self, key, value):
 		self._root = self._root.insert(key, value)
-		self._root._color = _Node._BLACK
 
 
 class OrderedSet(BinarySearchTree, Set):
@@ -200,7 +208,6 @@ class OrderedSet(BinarySearchTree, Set):
 	def add(self, item):
 		"Add an item to the set, replacing older items that are equal."
 		self._root = self._root.insert(item, item)
-		self._root._color = _Node._BLACK
 
 	def __ior__(self, other):
 		"Update self with new and replacement values from other (in-place union)."
