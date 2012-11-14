@@ -159,6 +159,7 @@ class _Node(Sized, Iterable, Container):
 
 	def _flip_colors(self):
 		"""Flip the colors of a node `self` and its two children."""
+		assert self._color != self._left._color == self._right._color
 		self._color = not self._color
 		self._left._color = not self._left._color
 		self._right._color = not self._right._color
