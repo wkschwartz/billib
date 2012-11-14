@@ -177,6 +177,14 @@ class BinarySearchTree(Sized, Iterable, Container):
 	def __contains__(self, key): return key in self._root
 	def __iter__(self): return iter(self._root)
 
+	def _search(self, key):
+		"Return value associated with `key`; Raise `KeyError` if key not found."
+		return self._root.search(key)
+
+	def _insert(self, key, value):
+		"Insert the key-value pair, replacing if key already present."
+		self._root = self._root.insert(key, value)
+
 
 class OrderedMapping(BinarySearchTree, Mapping):
 
@@ -210,10 +218,10 @@ class OrderedMapping(BinarySearchTree, Mapping):
 								' or iterables of pairs.'.format(type(self)))
 			self[k] = v
 
-	def __getitem__(self, key): return self._root.search(key)
+	def __getitem__(self, key): return self._search(key)
 
 	def __setitem__(self, key, value):
-		self._root = self._root.insert(key, value)
+		self._insert(key, value)
 
 
 class OrderedSet(BinarySearchTree, Set):
@@ -233,7 +241,7 @@ class OrderedSet(BinarySearchTree, Set):
 
 	def add(self, item):
 		"Add an item to the set, replacing older items that are equal."
-		self._root = self._root.insert(item, item)
+		self._insert(item, item)
 
 	def __ior__(self, other):
 		"Update self with new and replacement values from other (in-place union)."
@@ -243,4 +251,4 @@ class OrderedSet(BinarySearchTree, Set):
 
 	def find(self, item):
 		"If there is an equal item in self, return it. Else raise KeyError."
-		return self._root.search(item)
+		return self._search(item)
