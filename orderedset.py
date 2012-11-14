@@ -1,13 +1,32 @@
+"""Ordered symbol table data types.
+
+You may use `OrderedMapping` or `OrderdSet` directly for keys or elements
+(respectively) that are totally ordered but not necessarily hashable. These
+data types support the mapping and set interfaces respectively. They do not
+(currently) support deletion, but they do support insertion.
+
+You may create your own ordered symbol table client interface by subclassing the
+`BinarySearchTree` class.
+"""
+
+
 from collections.abc import Sized, Iterable, Container, Mapping, Set
+
 
 class _Node(Sized, Iterable, Container):
 
 	"""A left-leaning red-black BST. This is the 2-3 version.
 
+	You usually will not need this class directly. Instead, subclass the
+	`BinarySearchTree` class below. However, subclassing the preesnt class may
+	be useful for adding functionality with recursive algorithms. In that case,
+	also subclass `BinarySearchTree` and repalce its `__init__` method.
+
 	This code is adapted to Python from the Java code given in "Left-leaning
 	Red-Black Trees", Robert Sedgewick,
 	http://www.cs.princeton.edu/~rs/talks/LLRB/LLRB.pdf. See also the code at
-	http://algs4.cs.princeton.edu/33balanced/RedBlackBST.java.html."""
+	http://algs4.cs.princeton.edu/33balanced/RedBlackBST.java.html.
+	"""
 
 	_RED = True
 	_BLACK = False
@@ -67,7 +86,7 @@ class _Node(Sized, Iterable, Container):
 		return True
 
 	def search(self, key):
-		"""Return value associated with `key`; `None` if `key` not contained."""
+		"Return value associated with `key`; Raise `KeyError` if key not found."
 		x = self
 		while x is not None:
 			if key == x._key:
@@ -82,7 +101,7 @@ class _Node(Sized, Iterable, Container):
 		raise KeyError(key)
 
 	def insert(self, key, value):
-		"""Recursively insert the key-value pair in the subtree rooted at `self`."""
+		"Recursively insert the key-value pair in the subtree rooted at `self`."
 		self = self._insert(key, value)
 		self._color = self._BLACK
 		return self
@@ -148,7 +167,7 @@ class _Node(Sized, Iterable, Container):
 
 class BinarySearchTree(Sized, Iterable, Container):
 
-	"Abstract binary search tree. This class is only useful for sublcassing."
+	"Abstract binary search tree. Subclass this class to add a client interface."
 
 	def __init__(self):
 		"""Instantiate new empty BST."""
