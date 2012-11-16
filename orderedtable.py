@@ -26,6 +26,10 @@ class _Node(Sized, Iterable, Container):
 	be useful for adding functionality with recursive algorithms. In that case,
 	also subclass `BinarySearchTree` and repalce its `__init__` method.
 
+	Arbitrary attribute assignment is not allowed because every insertion would
+	cause the client to lose direct access to the node he assigned the attribute
+	to.
+
 	This code is adapted to Python from the Java code given in "Left-leaning
 	Red-Black Trees", Robert Sedgewick,
 	http://www.cs.princeton.edu/~rs/talks/LLRB/LLRB.pdf. See also the code at
@@ -33,12 +37,16 @@ class _Node(Sized, Iterable, Container):
 	whose comments were cribbed.
 	"""
 
+	__slots__ = '_key', '_value', '_color', '_left', '_right'
+
 	_RED = True
 	_BLACK = False
 
 	class _NullNode(Sized, Iterable, Container):
 
 		"Drop-in dummy `_Node`"
+
+		__slots__ = ()
 
 		def __str__(self): return self.__class__.__name__ + "()"
 		def __len__(self): return 0
