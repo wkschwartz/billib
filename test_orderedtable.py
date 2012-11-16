@@ -112,6 +112,22 @@ class TestBinarySearchTree(unittest.TestCase):
 		self.assertRaises(KeyError, t.ceiling, 10.000001)
 		self.assertRaises(KeyError, t.ceiling, 11)
 
+	def test_sorting(self):
+		t = self.cls()
+		data = list(self.data)
+		random.shuffle(data)
+		for i in data:
+			t._insert(i, i)
+		data.sort()
+		self.assertEqual(data, list(t))
+		t = self.cls()
+		data = list(self.data)
+		random.shuffle(data)
+		for i in data:
+			t._insert(i, i)
+		data.sort()
+		self.assertEqual(list(reversed(data)), list(reversed(t)))
+
 
 class TestOrderedMapping(unittest.TestCase):
 
@@ -249,6 +265,7 @@ class TestOrderedSet(unittest.TestCase):
 		random.shuffle(rnddata)
 		self.assertNotEqual(data, rnddata)
 		self.assertEqual(data, list(self.cls(rnddata)))
+		self.assertEqual(list(reversed(data)), list(reversed(self.cls(rnddata))))
 
 
 if __name__ == '__main__':

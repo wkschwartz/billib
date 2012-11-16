@@ -42,6 +42,7 @@ class _Node(Sized, Iterable, Container):
 
 		def __len__(self): return 0
 		def __iter__(self): return iter([])
+		def __reversed__(self): return iter([])
 		def __contains__(self, key): return False
 		def min(self): raise ValueError('No min of an empty container.')
 		def max(self): raise ValueError('No max of an empty container.')
@@ -81,12 +82,23 @@ class _Node(Sized, Iterable, Container):
 		return l + 1 + r
 
 	def __iter__(self):
+		"Iterate through the keys in order."
 		if self._left is not None:
 			for item in self._left:
 				yield item
 		yield self._key
 		if self._right is not None:
 			for item in self._right:
+				yield item
+
+	def __reversed__(self):
+		"Iterate through the keys in reverse order."
+		if self._right is not None:
+			for item in reversed(self._right):
+				yield item
+		yield self._key
+		if self._left is not None:
+			for item in reversed(self._left):
 				yield item
 
 	def __contains__(self, key):
@@ -306,7 +318,14 @@ class BinarySearchTree(Sized, Iterable, Container):
 
 	def __len__(self): return len(self._root)
 	def __contains__(self, key): return key in self._root
-	def __iter__(self): return iter(self._root)
+
+	def __iter__(self):
+		"Iterate through the keys in order."
+		return iter(self._root)
+
+	def __reversed__(self):
+		"Iterate through the keys in reverse order."
+		return reversed(self._root)
 
 	def _search(self, key):
 		"Return value associated with `key`; Raise `KeyError` if key not found."
