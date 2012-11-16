@@ -59,6 +59,8 @@ class _Node:
 		def max(self): raise ValueError('No max of an empty container.')
 		def floor(self, key): raise KeyError(key)
 		def ceiling(self, key): raise KeyError(key)
+		def rank(self, key): return 0
+		def select(self, k): raise IndexError('Select index %r out of bounds' % k)
 		def height(self): return 0
 		def search(self, key): raise KeyError(key)
 
@@ -233,6 +235,36 @@ class _Node:
 		else:
 			raise TypeError('Key %r not in a total order' % key)
 
+	def select(self, k):
+		"Return the key in the tree with the given rank k."
+		if k < 0 or k > len(self):
+			raise IndexError('Requested rank %r out of bounds' % k)
+		return self._select(k)._key
+
+	def _select(self, k):
+		if __debug__:
+			if k < 0 or k >= len(self):
+				raise self.NodeError('Select index out of bounds')
+		t = 0 if self._left is None else len(self._left)
+		if t > k:
+			return self._left._select(k)
+		elif t < k:
+			return self._right._select(k - t - 1)
+		else:
+			return self
+
+	def rank(self, key):
+		"Return number of keys in the tree that are less than the given key."
+		if key < self._key:
+			return 0 if self._left is None else self._left.rank(key)
+		elif key > self._key:
+			r = 0 if self._right is None else self._right.rank(key)
+			return 1 + len(self._left) + r
+		elif key == self._key:
+			return 0 if self._left is None else len(self._left)
+		else: raise TypeError("Key %r not in total order with tree's keys, such"
+							  " as %r." % (key, self._key))
+
 	#### Red-black helper methods ####
 
 	def _rotate_left(self):
@@ -281,6 +313,7 @@ class _Node:
 	def _check(self):
 		"Check integrity of red-black BST data structure."
 		if not self._is_BST(): raise self.NodeError("Not in symmetric order")
+		if not self._is_rank_consistent(): raise self.NodeError("Ranks not consistent")
 		if not self._is_23(): raise self.NodeError("Not a 2-3 tree")
 		if not self._is_balanced(): raise self.NodeError("Not balanced")
 
@@ -297,6 +330,20 @@ class _Node:
 		if max is not None and self._key >= max: return False
 		return ((self._left is None or self._left._is_BST(min, self._key)) and
 				(self._right is None or self._right._is_BST(self._key, max)))
+
+	def _is_rank_consistent(self):
+		"""Check that ranks are internally consistent.
+
+		Specifically, test that `self.select` and `self.rank` are inverse
+		functions.
+		"""
+		for i in range(len(self)):
+			if i != self.rank(self.select(i)):
+				return False
+		for key in self:
+			if key != self.select(self.rank(key)):
+				return False
+		return True
 
 	def _is_23(self):
 		"""Return wehther this tree properly models a 2-3 tree with red and black.
@@ -372,6 +419,13 @@ class BinarySearchTree:
 		"Return the least key >= the given key. Raise a KeyError if none present."
 		return self._root.ceiling(key)
 
+	def rank(self, key):
+		"Return number of keys in the tree that are less than the given key."
+		return self._root.rank(key)
+
+	def select(self, k):
+		"Return the key in the tree with the given rank k."
+		return self._root.select(k)
 
 class OrderedMapping(BinarySearchTree, Mapping):
 

@@ -136,6 +136,24 @@ class TestBinarySearchTree(unittest.TestCase):
 		t._insert(1, 1)
 		self.assertTrue(t)
 
+	def test_rank_select(self):
+		t = self.cls()
+		self.assertEqual(t.rank(1), 0)
+		self.assertRaises(IndexError, t.select, 0)
+		for i in range(10):
+			t._insert(i, chr(i))
+			self.assert_rank_consistent(t._root)
+
+	def assert_rank_consistent(self, n):
+		"""Check that ranks of node `n` are internally consistent.
+
+		Specifically, test that `n.select` and `n.rank` are inverse functions.
+		"""
+		for i in range(len(n)):
+			self.assertEqual(i, n.rank(n.select(i)))
+		for key in n:
+			self.assertEqual(key, n.select(n.rank(key)))
+
 
 class TestOrderedMapping(unittest.TestCase):
 
