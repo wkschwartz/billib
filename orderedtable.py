@@ -40,6 +40,7 @@ class _Node(Sized, Iterable, Container):
 
 		"Drop-in dummy `_Node`"
 
+		def __str__(self): return self.__class__.__name__ + "()"
 		def __len__(self): return 0
 		def __iter__(self): return iter([])
 		def __reversed__(self): return iter([])
@@ -75,6 +76,16 @@ class _Node(Sized, Iterable, Container):
 		self._value = value
 		self._color = self._RED
 		self._left = self._right = None
+
+	def __str__(self):
+		"Return a Lisp-style list of the keys as a string."
+		return type(self).__name__ + self._str()
+
+	def _str(self):
+		"Helper for __str__."
+		l = '' if self._left is None else ' ' + self._left._str()
+		r = '' if self._right is None else ' ' + self._right._str()
+		return '(' + str(self._key) + l + r + ')'
 
 	def __len__(self):
 		l = 0 if self._left is None else len(self._left)
