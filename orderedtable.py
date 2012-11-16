@@ -14,10 +14,10 @@ optimizations turned on (e.g., by the -O command line switch).
 """
 
 
-from collections.abc import Sized, Iterable, Container, Mapping, Set
+from collections.abc import Mapping, Set
 
 
-class _Node(Sized, Iterable, Container):
+class _Node:
 
 	"""A left-leaning red-black BST. This is the 2-3 version.
 
@@ -42,7 +42,7 @@ class _Node(Sized, Iterable, Container):
 	_RED = True
 	_BLACK = False
 
-	class _NullNode(Sized, Iterable, Container):
+	class _NullNode:
 
 		"Drop-in dummy `_Node`"
 
@@ -327,7 +327,7 @@ class _Node(Sized, Iterable, Container):
 		return l and r
 
 
-class BinarySearchTree(Sized, Iterable, Container):
+class BinarySearchTree:
 
 	"Abstract binary search tree. Subclass this class to add a client interface."
 
