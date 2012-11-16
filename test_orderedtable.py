@@ -31,7 +31,7 @@ class TestBinarySearchTree(unittest.TestCase):
 		t = self.cls()
 		for i in data:
 			t._insert(i, i)
-		self.assertLessEqual(t._root.height(), 2.0 * math.log2(size))
+		self.assertLessEqual(t._root.height(), 2.0 * math.log(size, 2))
 
 	def test_height_after_ordered_insert(self):
 		data = list(range(2 * RECURSION_LIMIT))
@@ -39,7 +39,7 @@ class TestBinarySearchTree(unittest.TestCase):
 		t = self.cls()
 		for i in data:
 			t._insert(i, i)
-		self.assertLessEqual(t._root.height(), 2.0 * math.log2(size))
+		self.assertLessEqual(t._root.height(), 2.0 * math.log(size, 2))
 
 	def _int_keys(self, data):
 		t = self.cls()
@@ -51,7 +51,7 @@ class TestBinarySearchTree(unittest.TestCase):
 			self.assertEqual(list(range(j)), list(t))
 			t._insert(j, data[j])
 			if j > 1:
-				self.assertLess(t._root.height(), 2.0 * math.log2(j + 1))
+				self.assertLess(t._root.height(), 2.0 * math.log(j + 1, 2))
 			else:
 				self.assertEqual(t._root.height(), j + 1)
 			self.assertEqual(data[j], t._search(j))
