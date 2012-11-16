@@ -128,6 +128,12 @@ class TestBinarySearchTree(unittest.TestCase):
 		data.sort()
 		self.assertEqual(list(reversed(data)), list(reversed(t)))
 
+	def test_bool(self):
+		t = self.cls()
+		self.assertFalse(t)
+		t._insert(1, 1)
+		self.assertTrue(t)
+
 
 class TestOrderedMapping(unittest.TestCase):
 
