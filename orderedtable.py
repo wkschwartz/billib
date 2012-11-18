@@ -257,11 +257,12 @@ class _Node:
 		"Return number of keys in the tree that are less than the given key."
 		if key < self._key:
 			return 0 if self._left is None else self._left.rank(key)
-		elif key > self._key:
+		l = 0 if self._left is None else len(self._left)
+		if key > self._key:
 			r = 0 if self._right is None else self._right.rank(key)
-			return 1 + len(self._left) + r
+			return 1 + l + r
 		elif key == self._key:
-			return 0 if self._left is None else len(self._left)
+			return l
 		else: raise TypeError("Key %r not in total order with tree's keys, such"
 							  " as %r." % (key, self._key))
 

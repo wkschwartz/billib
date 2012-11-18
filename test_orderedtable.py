@@ -138,11 +138,13 @@ class TestBinarySearchTree(unittest.TestCase):
 
 	def test_rank_select(self):
 		t = self.cls()
-		self.assertEqual(t.rank(1), 0)
+		self.assertEqual(t.rank(10), 0)
 		self.assertRaises(IndexError, t.select, 0)
 		for i in range(10):
 			t._insert(i, chr(i))
+			self.assertEqual(i + 1, t.rank(10))
 			self.assert_rank_consistent(t._root)
+		self.assertEqual(0, t.rank(-1))
 
 	def assert_rank_consistent(self, n):
 		"""Check that ranks of node `n` are internally consistent.
