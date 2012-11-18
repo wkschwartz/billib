@@ -39,7 +39,7 @@ class _Node:
 	whose comments were cribbed.
 	"""
 
-	__slots__ = '_key', '_value', '_color', '_left', '_right'
+	__slots__ = '_key', '_value', '_color', '_left', '_right', '_N'
 
 	_RED = True
 	_BLACK = False
@@ -88,6 +88,7 @@ class _Node:
 		self._key = key
 		self._value = value
 		self._color = self._RED
+		self._N = 1
 		self._left = self._right = None
 
 	def __str__(self):
@@ -101,9 +102,7 @@ class _Node:
 		return '(' + str(self._key) + l + r + ')'
 
 	def __len__(self):
-		l = 0 if self._left is None else len(self._left)
-		r = 0 if self._right is None else len(self._right)
-		return l + 1 + r
+		return self._N
 
 	def __iter__(self, *, lo=None, hi=None):
 		"""Iterate through the keys in order.
@@ -196,6 +195,7 @@ class _Node:
 			self = self._rotate_right()
 		if isred(self._left) and isred(self._right):
 			self._flip_colors()
+		self._N = self._recursive_len()
 		return self
 
 	#### Ordered symbol table methods ####
@@ -298,6 +298,8 @@ class _Node:
 		x._left = self
 		x._color = self._color
 		self._color = self._RED
+		x._N = self._N
+		self._N = self._recursive_len()
 		return x
 
 	def _rotate_right(self):
@@ -309,6 +311,8 @@ class _Node:
 		x._right = self
 		x._color = self._color
 		self._color = self._RED
+		x._N = self._N
+		self._N = self._recursive_len()
 		return x
 
 	def _flip_colors(self):
@@ -319,6 +323,12 @@ class _Node:
 		self._color = not self._color
 		self._left._color = not self._left._color
 		self._right._color = not self._right._color
+
+	def _recursive_len(self):
+		"Recursively calculate what the length attribute `N` should be."
+		l = 0 if self._left is None else self._left._N
+		r = 0 if self._right is None else self._right._N
+		return l + 1 + r
 
 	@classmethod
 	def _isred(cls, h):
@@ -358,6 +368,10 @@ class _Node:
 
 		Specifically, return wether the tree rooted at `self` has no red right
 		links and at most one (left) red links in a row on any path.
+
+		Is `self._N` correct?
+		---------------------
+		Return whether the field that tracks container size is correct.
 		"""
 		# Is 2-3 tree?
 		isred = self._isred
@@ -366,6 +380,9 @@ class _Node:
 		# Is BST?
 		if min is not None and self._key <= min: return False
 		if max is not None and self._key >= max: return False
+		# Is length correct?
+		#if self._N != self._recursive_len():
+		#	return False
 		return ((self._left is None or self._left._is_23_BST(min, self._key)) and
 				(self._right is None or self._right._is_23_BST(self._key, max)))
 
