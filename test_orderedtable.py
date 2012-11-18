@@ -293,6 +293,10 @@ class TestOrderedSet(unittest.TestCase):
 		self.assertEqual(data, list(self.cls(rnddata)))
 		self.assertEqual(list(reversed(data)), list(reversed(self.cls(rnddata))))
 
+	def test_deduplication(self):
+		data = [i % 10  for i in range(100)]
+		self.assertEqual([i for i in range(10)], list(self.cls(data)))
+
 
 if __name__ == '__main__':
 	unittest.main()
