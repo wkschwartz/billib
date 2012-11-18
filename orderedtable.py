@@ -447,7 +447,7 @@ class OrderedMapping(BinarySearchTree, Mapping):
 	def update(self, iterable=()):
 		"""Update self with new or replacement values from `iterable`.
 
-		`iterable` is an optional argument  that is either a mapping or is an
+		`iterable` is an optional argument that is either a mapping or is an
 		iterable containing two-item iterables: The first item is the key and
 		the second the value. The `OrderedMapping` will contain these key-value
 		pairs. If keys are repeated, later copies replace earlier ones. The keys
