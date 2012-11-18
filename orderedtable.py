@@ -312,24 +312,40 @@ class _Node:
 
 	def _check(self):
 		"Check integrity of red-black BST data structure."
-		if not self._is_BST(): raise self.NodeError("Not in symmetric order")
+		if not self._is_23_BST():
+			raise self.NodeError("Not in symmetric order or not a 2-3 tree")
 		if not self._is_rank_consistent(): raise self.NodeError("Ranks not consistent")
-		if not self._is_23(): raise self.NodeError("Not a 2-3 tree")
 		if not self._is_balanced(): raise self.NodeError("Not balanced")
 
-	def _is_BST(self, min=None, max=None):
-		"""Return whether this binary tree satisfies symmetric order.
+	def _is_23_BST(self, min=None, max=None):
+		"""Check that self is a 2-3 tree in symmetric (binary search) order.
+
+		Is `self` a BST?
+		----------------
+		Return whether this binary tree satisfies symmetric order.
 
 		More specifically, return wehther the tree rooted at `self` a BST with
 		all keys strictly between `min` and `max`. When those arguments aren't
 		given (or they are `None`), this constraint is treated as non-binding.
 		Thus, to test the root of a tree, call without argument. Credit: Bob
 		Dondero.
+
+		Is `self` a 2-3 tree?
+		---------------------
+		Return wehther this tree properly models a 2-3 tree with red and black.
+
+		Specifically, return wether the tree rooted at `self` has no red right
+		links and at most one (left) red links in a row on any path.
 		"""
+		# Is 2-3 tree?
+		isred = self._isred
+		if isred(self._right): return False
+		if isred(self) and isred(self._left): return False
+		# Is BST?
 		if min is not None and self._key <= min: return False
 		if max is not None and self._key >= max: return False
-		return ((self._left is None or self._left._is_BST(min, self._key)) and
-				(self._right is None or self._right._is_BST(self._key, max)))
+		return ((self._left is None or self._left._is_23_BST(min, self._key)) and
+				(self._right is None or self._right._is_23_BST(self._key, max)))
 
 	def _is_rank_consistent(self):
 		"""Check that ranks are internally consistent.
@@ -344,18 +360,6 @@ class _Node:
 			if key != self.select(self.rank(key)):
 				return False
 		return True
-
-	def _is_23(self):
-		"""Return wehther this tree properly models a 2-3 tree with red and black.
-
-		Specifically, return wether the tree rooted at `self` has no red right
-		links and at most one (left) red links in a row on any path.
-		"""
-		isred = self._isred
-		if isred(self._right): return False
-		if isred(self) and isred(self._left): return False
-		return ((self._left is None or self._left._is_23()) and
-				(self._right is None or self._right._is_23()))
 
 	def _is_balanced(self):
 		"Return whether all paths self to leaf have the same number of black edges."
