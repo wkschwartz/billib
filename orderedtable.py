@@ -63,6 +63,7 @@ class _Node:
 		def select(self, k): raise IndexError('Select index %r out of bounds' % k)
 		def height(self): return 0
 		def search(self, key): raise KeyError(key)
+		def width(self, lo, hi): return 0
 
 		def insert(self, key, value):
 			n = _Node(key, value)
@@ -266,6 +267,15 @@ class _Node:
 		else: raise TypeError("Key %r not in total order with tree's keys, such"
 							  " as %r." % (key, self._key))
 
+	def width(self, lo, hi):
+		"The number of keys between lo and hi inclusive."
+		if lo > hi:
+			lo, hi = hi, lo
+		if hi in self:
+			return self.rank(hi) - self.rank(lo) + 1
+		else:
+			return self.rank(hi) - self.rank(lo)
+
 	#### Red-black helper methods ####
 
 	def _rotate_left(self):
@@ -431,6 +441,10 @@ class BinarySearchTree:
 	def select(self, k):
 		"Return the key in the tree with the given rank k."
 		return self._root.select(k)
+
+	def width(self, lo, hi):
+		"The number of keys between lo and hi inclusive."
+		return self._root.width(lo, hi)
 
 class OrderedMapping(BinarySearchTree, Mapping):
 

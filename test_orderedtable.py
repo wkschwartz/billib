@@ -136,6 +136,17 @@ class TestBinarySearchTree(unittest.TestCase):
 		t._insert(1, 1)
 		self.assertTrue(t)
 
+	def test_width(self):
+		t = self.cls()
+		self.assertEqual(0, t.width(0, 10))
+		for i in range(10):
+			t._insert(i, i)
+		self.assertEqual(10, t.width(-1, 11))
+		self.assertEqual(10, t.width(0, 9))
+		for i in range(10):
+			for j in range(10):
+				self.assertEqual(abs(i - j) + 1, t.width(i, j))
+
 	def test_rank_select(self):
 		t = self.cls()
 		self.assertEqual(t.rank(10), 0)
