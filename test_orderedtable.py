@@ -176,14 +176,19 @@ class TestBinarySearchTree(unittest.TestCase):
 				self.assertEqual([], list(t.__reversed__(lo=lo, hi=hi)))
 		for i in range(3):
 			t._insert(i, i)
+		def toargs(lh): return {'lo': lh[0], 'hi': lh[1]}
 		for lohi in (None, None), (-1, 3), (0, 3), (None, 3), (0, None):
-			lohi = {'lo': lohi[0], 'hi': lohi[1]}
-			self.assertEqual([0, 1, 2], list(t.__iter__(**lohi)))
-			self.assertEqual([2, 1, 0], list(t.__reversed__(**lohi)))
+			self.assertEqual([0, 1, 2], list(t.__iter__(**toargs(lohi))))
+			self.assertEqual([2, 1, 0], list(t.__reversed__(**toargs(lohi))))
 		for lohi in (0, 2), (-.5, 1.5):
-			lohi = {'lo': lohi[0], 'hi': lohi[1]}
-			self.assertEqual([0, 1], list(t.__iter__(**lohi)))
-			self.assertEqual([1, 0], list(t.__reversed__(**lohi)))
+			self.assertEqual([0, 1], list(t.__iter__(**toargs(lohi))))
+			self.assertEqual([1, 0], list(t.__reversed__(**toargs(lohi))))
+		for lohi in (1, 1.0001), (0.99, 1.001), (0.0001, 2):
+			self.assertEqual([1], list(t.__iter__(**toargs(lohi))), lohi)
+			self.assertEqual([1], list(t.__reversed__(**toargs(lohi))), lohi)
+		for lohi in (1, 1), (2, 0), (3, 0), (4, -1):
+			self.assertEqual([], list(t.__iter__(**toargs(lohi))), lohi)
+			self.assertEqual([], list(t.__reversed__(**toargs(lohi))), lohi)
 
 class TestOrderedMapping(unittest.TestCase):
 
