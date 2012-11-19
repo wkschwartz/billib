@@ -463,6 +463,17 @@ class BinarySearchTree:
 		"Return the key in the tree with the given rank k."
 		return self._root.select(k)
 
+	def range(self, *args):
+		"Return iterator over keys with arguments like builtin.range()."
+		s = slice(*args)
+		if s.step is None or s.step == 1:
+			return self._root.__iter__(lo=s.start, hi=s.stop)
+		elif s.step == -1:
+			return self._root.__reversed__(lo=s.stop, hi=s.start)
+		else:
+			raise ValueError('{.__name__!s} objects only support range steps of '
+							 '1 and -1, not {!r}'.format(type(self), s.step))
+
 	def width(self, lo, hi):
 		"The number of keys k such that lo <= k < hi."
 		return self._root.width(lo, hi)
