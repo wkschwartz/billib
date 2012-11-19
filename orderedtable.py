@@ -282,13 +282,10 @@ class _Node:
 							  " as %r." % (key, self._key))
 
 	def width(self, lo, hi):
-		"The number of keys between lo and hi inclusive."
+		"The number of keys k such that lo <= k < hi."
 		if lo > hi:
 			lo, hi = hi, lo
-		if hi in self:
-			return self.rank(hi) - self.rank(lo) + 1
-		else:
-			return self.rank(hi) - self.rank(lo)
+		return self.rank(hi) - self.rank(lo)
 
 	#### Red-black helper methods ####
 
@@ -467,7 +464,7 @@ class BinarySearchTree:
 		return self._root.select(k)
 
 	def width(self, lo, hi):
-		"The number of keys between lo and hi inclusive."
+		"The number of keys k such that lo <= k < hi."
 		return self._root.width(lo, hi)
 
 class OrderedMapping(BinarySearchTree, Mapping):

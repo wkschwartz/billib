@@ -142,10 +142,11 @@ class TestBinarySearchTree(unittest.TestCase):
 		for i in range(10):
 			t._insert(i, i)
 		self.assertEqual(10, t.width(-1, 11))
-		self.assertEqual(10, t.width(0, 9))
+		self.assertEqual(10, t.width(0, 10))
+		self.assertEqual(9, t.width(0, 9))
 		for i in range(10):
 			for j in range(10):
-				self.assertEqual(abs(i - j) + 1, t.width(i, j))
+				self.assertEqual(abs(i - j), t.width(i, j))
 
 	def test_rank_select(self):
 		t = self.cls()
