@@ -52,8 +52,8 @@ class _Node:
 
 		def __str__(self): return self.__class__.__name__ + "()"
 		def __len__(self): return 0
-		def __iter__(self): return iter([])
-		def __reversed__(self): return iter([])
+		def __iter__(self, *, lo=None, hi=None): return iter([])
+		def __reversed__(self, *, lo=None, hi=None): return iter([])
 		def __contains__(self, key): return False
 		def min(self): raise ValueError('No min of an empty container.')
 		def max(self): raise ValueError('No max of an empty container.')
@@ -105,24 +105,38 @@ class _Node:
 		r = 0 if self._right is None else len(self._right)
 		return l + 1 + r
 
-	def __iter__(self):
-		"Iterate through the keys in order."
-		if self._left is not None:
-			for item in self._left:
+	def __iter__(self, *, lo=None, hi=None):
+		"""Iterate through the keys in order.
+
+		Optionally use keyword arguments `lo` and `hi` to limit iteration to
+		keys k such that lo <= k < hi. (The assymetry between the conditionals
+		is meant to parallel the semantics of builtins slice() and range().)
+		"""
+		if (lo is None or lo < self._key) and self._left is not None:
+			for item in self._left.__iter__(lo=lo, hi=hi):
 				yield item
-		yield self._key
-		if self._right is not None:
-			for item in self._right:
+		if (lo is None and hi is None or lo is None and self._key < hi or
+				hi is None and lo <= self._key or lo <= self._key < hi):
+			yield self._key
+		if (hi is None or hi > self._key) and self._right is not None:
+			for item in self._right.__iter__(lo=lo, hi=hi):
 				yield item
 
-	def __reversed__(self):
-		"Iterate through the keys in reverse order."
-		if self._right is not None:
-			for item in reversed(self._right):
+	def __reversed__(self, *, lo=None, hi=None):
+		"""Iterate through the keys in reverse order.
+
+		Optionally use keyword arguments `lo` and `hi` to limit iteration to
+		keys k such that lo <= k < hi. (The assymetry between the conditionals
+		is meant to parallel the semantics of builtins slice() and range().)
+		"""
+		if (hi is None or hi > self._key) and self._right is not None:
+			for item in self._right.__reversed__(lo=lo, hi=hi):
 				yield item
-		yield self._key
-		if self._left is not None:
-			for item in reversed(self._left):
+		if (lo is None and hi is None or lo is None and self._key < hi or
+				hi is None and lo <= self._key or lo <= self._key < hi):
+			yield self._key
+		if (lo is None or lo < self._key) and self._left is not None:
+			for item in self._left.__reversed__(lo=lo, hi=hi):
 				yield item
 
 	def __contains__(self, key):
@@ -402,13 +416,23 @@ class BinarySearchTree:
 	def __len__(self): return len(self._root)
 	def __contains__(self, key): return key in self._root
 
-	def __iter__(self):
-		"Iterate through the keys in order."
-		return iter(self._root)
+	def __iter__(self, *, lo=None, hi=None):
+		"""Iterate through the keys in order.
 
-	def __reversed__(self):
-		"Iterate through the keys in reverse order."
-		return reversed(self._root)
+		Optionally use keyword arguments `lo` and `hi` to limit iteration to
+		keys k such that lo <= k < hi. (The assymetry between the conditionals
+		is meant to parallel the semantics of builtins slice() and range().)
+		"""
+		return self._root.__iter__(lo=lo, hi=hi)
+
+	def __reversed__(self, *, lo=None, hi=None):
+		"""Iterate through the keys in reverse order.
+
+		Optionally use keyword arguments `lo` and `hi` to limit iteration to
+		keys k such that lo <= k < hi. (The assymetry between the conditionals
+		is meant to parallel the semantics of builtins slice() and range().)
+		"""
+		return self._root.__reversed__(lo=lo, hi=hi)
 
 	def _search(self, key):
 		"Return value associated with `key`; Raise `KeyError` if key not found."
