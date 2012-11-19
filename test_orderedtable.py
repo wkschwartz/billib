@@ -283,8 +283,8 @@ class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 		self.assertNode(t)
 		for lo in -1, 0, 1, None:
 			for hi in -1, 0, 1, None:
-				self.assertEqual([], list(t.__iter__(lo=lo, hi=hi)))
-				self.assertEqual([], list(t.__reversed__(lo=lo, hi=hi)))
+				self.assertEqual([], list(t.range(lo, hi)))
+				self.assertEqual([], list(t.range(lo, hi, -1)))
 		for i in range(3):
 			t._insert(i, i)
 			self.assertNode(t)
