@@ -250,7 +250,7 @@ class _Node:
 
 	def select(self, k):
 		"Return the key in the tree with the given rank k."
-		if k < 0 or k > len(self):
+		if k < 0 or k >= len(self):
 			raise IndexError('Requested rank %r out of bounds' % k)
 		return self._select(k)._key
 

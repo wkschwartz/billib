@@ -273,7 +273,9 @@ class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 			t._insert(i, chr(i))
 			self.assertNode(t)
 			self.assertEqual(i + 1, t.rank(10))
-			self.assert_rank_consistent(t._root)
+			self.assertEqual(i, t.select(i))
+			self.assertEqual(i, t.rank(i))
+			self.assertRaises(IndexError, t.select, i + 1)
 		self.assertEqual(0, t.rank(-1))
 
 	def test_range(self):
