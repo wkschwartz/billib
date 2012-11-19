@@ -19,6 +19,33 @@ The tests for this code have been run successfully on Python 3.3 and 3.2.
 from collections import Mapping, Set
 
 
+class _NullNode:
+
+	"Drop-in dummy `_Node`"
+
+	__slots__ = ()
+
+	def __str__(self): return self.__class__.__name__ + "()"
+	def __len__(self): return 0
+	def __iter__(self, *, lo=None, hi=None): return iter([])
+	def __reversed__(self, *, lo=None, hi=None): return iter([])
+	def __contains__(self, key): return False
+	def min(self): raise ValueError('No min of an empty container.')
+	def max(self): raise ValueError('No max of an empty container.')
+	def floor(self, key): raise KeyError(key)
+	def ceiling(self, key): raise KeyError(key)
+	def rank(self, key): return 0
+	def select(self, k): raise IndexError('Select index %r out of bounds' % k)
+	def height(self): return 0
+	def search(self, key): raise KeyError(key)
+	def width(self, lo, hi): return 0
+
+	def insert(self, key, value):
+		n = _Node(key, value)
+		n._color = _Node._BLACK
+		return n
+
+
 class _Node:
 
 	"""A left-leaning red-black BST. This is the 2-3 version.
@@ -44,39 +71,13 @@ class _Node:
 	_RED = True
 	_BLACK = False
 
-	class _NullNode:
-
-		"Drop-in dummy `_Node`"
-
-		__slots__ = ()
-
-		def __str__(self): return self.__class__.__name__ + "()"
-		def __len__(self): return 0
-		def __iter__(self, *, lo=None, hi=None): return iter([])
-		def __reversed__(self, *, lo=None, hi=None): return iter([])
-		def __contains__(self, key): return False
-		def min(self): raise ValueError('No min of an empty container.')
-		def max(self): raise ValueError('No max of an empty container.')
-		def floor(self, key): raise KeyError(key)
-		def ceiling(self, key): raise KeyError(key)
-		def rank(self, key): return 0
-		def select(self, k): raise IndexError('Select index %r out of bounds' % k)
-		def height(self): return 0
-		def search(self, key): raise KeyError(key)
-		def width(self, lo, hi): return 0
-
-		def insert(self, key, value):
-			n = _Node(key, value)
-			n._color = _Node._BLACK
-			return n
-
 	def __new__(cls, *args):
 		if args and len(args) != 2:
 			raise TypeError('%s() takes at most 3 arguments (%r given)' %
 							(cls.__name__, len(args)))
 		elif args:
 			return super().__new__(cls)
-		return cls._NullNode()
+		return _NullNode()
 
 	def __init__(self, key, value):
 		try:

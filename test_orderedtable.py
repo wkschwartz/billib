@@ -20,7 +20,7 @@ class NodeChecker:
 		"Check integrity of red-black BST data structure."
 		if isinstance(h, orderedtable.BinarySearchTree):
 			h = h._root
-		if isinstance(h, orderedtable._Node._NullNode):
+		if isinstance(h, orderedtable._NullNode):
 			return True
 		if not self._is_23_BST(h):
 			raise self.NodeError("Not in symmetric order or not a 2-3 tree")
