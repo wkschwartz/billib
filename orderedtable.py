@@ -332,6 +332,10 @@ class BinarySearchTree:
 		"""Instantiate new empty BST."""
 		self._root = _NullNode()
 
+	def clear(self):
+		"Remove every element from the tree in constant time."
+		self.__init__()
+
 	def __len__(self): return len(self._root)
 	def __contains__(self, key): return key in self._root
 

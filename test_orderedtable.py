@@ -105,6 +105,21 @@ class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 		self.cls = orderedtable.BinarySearchTree
 		self.data = tuple(chr(i + 0x20) for i in range(95))
 
+	def test_clear(self):
+		t = self.cls()
+		self.assertNode(t)
+		self.assertEqual([], list(t))
+		self.assertEqual(0, len(t))
+		for i in range(10):
+			t._insert(i, chr(i))
+		self.assertNode(t)
+		self.assertEqual(list(range(10)), list(t))
+		self.assertEqual(10, len(t))
+		t.clear()
+		self.assertNode(t)
+		self.assertEqual([], list(t))
+		self.assertEqual(0, len(t))
+
 	def test_pickle(self):
 		t = self.cls()
 		self.assertNode(t)
