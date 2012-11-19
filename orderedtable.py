@@ -53,7 +53,8 @@ class _Node:
 	You usually will not need this class directly. Instead, subclass the
 	`BinarySearchTree` class below. However, subclassing the preesnt class may
 	be useful for adding functionality with recursive algorithms. In that case,
-	also subclass `BinarySearchTree` and repalce its `__init__` method.
+	also subclass `_NullNode` to replace its `insert` method and sublcass
+	`BinarySearchTree` to repalce its `__init__` method.
 
 	Arbitrary attribute assignment is not allowed because every insertion would
 	cause the client to lose direct access to the node he assigned the attribute
@@ -70,14 +71,6 @@ class _Node:
 
 	_RED = True
 	_BLACK = False
-
-	def __new__(cls, *args):
-		if args and len(args) != 2:
-			raise TypeError('%s() takes at most 3 arguments (%r given)' %
-							(cls.__name__, len(args)))
-		elif args:
-			return super().__new__(cls)
-		return _NullNode()
 
 	def __init__(self, key, value):
 		try:
@@ -337,7 +330,7 @@ class BinarySearchTree:
 
 	def __init__(self):
 		"""Instantiate new empty BST."""
-		self._root = _Node()
+		self._root = _NullNode()
 
 	def __len__(self): return len(self._root)
 	def __contains__(self, key): return key in self._root
