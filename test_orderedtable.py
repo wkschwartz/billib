@@ -3,6 +3,7 @@ import orderedtable
 import random
 import sys
 import math
+import pickle
 
 
 RECURSION_LIMIT = sys.getrecursionlimit()
@@ -103,6 +104,21 @@ class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 	def setUp(self):
 		self.cls = orderedtable.BinarySearchTree
 		self.data = tuple(chr(i + 0x20) for i in range(95))
+
+	def test_pickle(self):
+		t = self.cls()
+		self.assertNode(t)
+		pickled = pickle.loads(pickle.dumps(t))
+		self.assertNode(pickled)
+		self.assertEqual(len(pickled), 0)
+		for i in range(6):
+			t._insert(i, chr(i))
+			self.assertNode(t)
+			pickled = pickle.loads(pickle.dumps(t))
+			self.assertNode(pickled)
+			self.assertEqual(len(pickled), i)
+			for j in range(i):
+				self.assertEqual(t._search(i), pickled._search(i))
 
 	def test_int_keys_in_order(self):
 		for i in range(len(self.data)):
