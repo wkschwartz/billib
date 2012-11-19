@@ -118,7 +118,7 @@ class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 			self.assertNode(pickled)
 			self.assertEqual(len(pickled), i + 1)
 			for j in range(i):
-				self.assertEqual(pickled._search(i), pickled._search(i))
+				self.assertEqual(chr(j), pickled._search(j))
 
 	def test_int_keys_in_order(self):
 		for i in range(len(self.data)):
