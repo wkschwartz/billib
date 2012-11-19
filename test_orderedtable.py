@@ -8,7 +8,97 @@ import math
 RECURSION_LIMIT = sys.getrecursionlimit()
 
 
-class TestBinarySearchTree(unittest.TestCase):
+class NodeChecker:
+
+	"Check integrity of red-black BST data structure."
+
+	class NodeError(AssertionError):
+		"A left-leaning red-black tree invariant has been violated unexpectedly."
+
+	def assertNode(self, h):
+		"Check integrity of red-black BST data structure."
+		if isinstance(h, orderedtable.BinarySearchTree):
+			h = h._root
+		if isinstance(h, orderedtable._Node._NullNode):
+			return True
+		if not self._is_23_BST(h):
+			raise self.NodeError("Not in symmetric order or not a 2-3 tree")
+		if not self._is_rank_consistent(h):
+			raise self.NodeError("Ranks not consistent")
+		if not self._is_balanced(h):
+			raise self.NodeError("Not balanced")
+		return True
+
+	def _is_23_BST(self, h, min=None, max=None):
+		"""Check that h is a 2-3 tree in symmetric (binary search) order.
+
+		Is `h` a BST?
+		----------------
+		Return whether this binary tree satisfies symmetric order.
+
+		More specifically, return wehther the tree rooted at `h` a BST with all
+		keys strictly between `min` and `max`. When those arguments aren't given
+		(or they are `None`), this constraint is treated as non-binding. Thus,
+		to test the root of a tree h, call as `_is_23_BST(h)`. Credit: Bob
+		Dondero.
+
+		Is `h` a 2-3 tree?
+		---------------------
+		Return wehther this tree properly models a 2-3 tree with red and black.
+
+		Specifically, return wether the tree rooted at `h` has no red right
+		links and at most one (left) red links in a row on any path.
+
+		Is `h._N` correct?
+		---------------------
+		Return whether the field that tracks container size is correct.
+		"""
+		# Is 2-3 tree?
+		isred = h._isred
+		if isred(h._right): return False
+		if isred(h) and isred(h._left): return False
+		# Is BST?
+		if min is not None and h._key <= min: return False
+		if max is not None and h._key >= max: return False
+		# Is length correct?
+		if h._N != h._recursive_len():
+			return False
+		return ((h._left is None or self._is_23_BST(h._left, min, h._key)) and
+				(h._right is None or self._is_23_BST(h._right, h._key, max)))
+
+	def _is_rank_consistent(self, h):
+		"""Check that ranks are internally consistent.
+
+		Specifically, test that `h.select` and `h.rank` are inverse functions.
+		"""
+		for i in range(len(h)):
+			if i != h.rank(h.select(i)):
+				return False
+		for key in h:
+			if key != h.select(h.rank(key)):
+				return False
+		return True
+
+	def _is_balanced(self, h):
+		"Return whether all paths h to leaf have the same number of black edges."
+		black = 0
+		x = h
+		while x is not None:
+			if x._color != x._RED:
+				black += 1
+			x = x._left
+		return self._is_balanced_all_paths(h, black)
+
+	def _is_balanced_all_paths(self, h, black):
+		"Return whether every path from h to leaf has the given number of black links"
+		if h._color != h._RED:
+			black -= 1
+		l = black == 0 if h._left is None else self._is_balanced_all_paths(h._left, black)
+		r = black == 0 if h._right is None else self._is_balanced_all_paths(h._right, black)
+		return l and r
+
+
+class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 
 	def setUp(self):
 		self.cls = orderedtable.BinarySearchTree
@@ -29,20 +119,25 @@ class TestBinarySearchTree(unittest.TestCase):
 		size = len(data)
 		random.shuffle(data)
 		t = self.cls()
+		self.assertNode(t)
 		for i in data:
 			t._insert(i, i)
+			self.assertNode(t)
 		self.assertLessEqual(t._root.height(), 2.0 * math.log(size, 2))
 
 	def test_height_after_ordered_insert(self):
 		data = list(range(2 * RECURSION_LIMIT))
 		size = len(data)
 		t = self.cls()
+		self.assertNode(t)
 		for i in data:
 			t._insert(i, i)
+			self.assertNode(t)
 		self.assertLessEqual(t._root.height(), 2.0 * math.log(size, 2))
 
 	def _int_keys(self, data):
 		t = self.cls()
+		self.assertNode(t)
 		self.assertEqual(t._root.height(), 0)
 		i = len(data)
 		for j in range(i):
@@ -50,6 +145,7 @@ class TestBinarySearchTree(unittest.TestCase):
 			self.assertNotIn(j, t)
 			self.assertEqual(list(range(j)), list(t))
 			t._insert(j, data[j])
+			self.assertNode(t)
 			if j > 1:
 				self.assertLess(t._root.height(), 2.0 * math.log(j + 1, 2))
 			else:
@@ -62,47 +158,59 @@ class TestBinarySearchTree(unittest.TestCase):
 
 	def test_insert_replaces(self):
 		t = self.cls()
+		self.assertNode(t)
 		t._insert(1, 'a')
+		self.assertNode(t)
 		self.assertEqual('a', t._search(1))
 		t._insert(1, 'b')
+		self.assertNode(t)
 		self.assertEqual('b', t._search(1))
 
 	def test_only_ordered_keys(self):
 		t = self.cls()
+		self.assertNode(t)
 		for k in None, object(), type, {}:
 			self.assertRaises(TypeError, t._search, k, 'a')
 			self.assertRaises(TypeError, t._insert, k, 'a')
 
 	def test_disjoint_keys(self):
 		t = self.cls()
+		self.assertNode(t)
 		t._insert({1}, 'a')
+		self.assertNode(t)
 		self.assertRaises(KeyError, t._search, set())
 		self.assertRaises(TypeError, t._search, {2})
 		self.assertRaises(TypeError, t._insert, {2})
 
 	def test_unhashable_keys(self):
 		t = self.cls()
+		self.assertNode(t)
 		for k in [], [1], [2]:
 			t._insert(k, 'a')
+			self.assertNode(t)
 			self.assertEqual(t._search(k), 'a')
 
 	def test_min_max(self):
 		t = self.cls()
+		self.assertNode(t)
 		self.assertRaises(ValueError, t.min)
 		self.assertRaises(ValueError, t.max)
 		data = list(self.data)
 		random.shuffle(data)
 		for item in data:
 			t._insert(item, ord(item))
+			self.assertNode(t)
 		self.assertEqual(min(data), t.min())
 		self.assertEqual(max(data), t.max())
 
 	def test_floor_ceiling(self):
 		t = self.cls()
+		self.assertNode(t)
 		self.assertRaises(KeyError, t.floor, 10)
 		self.assertRaises(KeyError, t.ceiling, 10)
 		for i in -1, 5, 10:
 			t._insert(i, range(i))
+			self.assertNode(t)
 		for i, f in {100: 10, 10.00001: 10, 10: 10, 9.9999: 5, 8: 5, 5: 5, 0: -1,
 					 -0.99999: -1, -1: -1}.items():
 			self.assertEqual(f, t.floor(i))
@@ -116,31 +224,39 @@ class TestBinarySearchTree(unittest.TestCase):
 
 	def test_sorting(self):
 		t = self.cls()
+		self.assertNode(t)
 		data = list(self.data)
 		random.shuffle(data)
 		for i in data:
 			t._insert(i, i)
+			self.assertNode(t)
 		data.sort()
 		self.assertEqual(data, list(t))
 		t = self.cls()
+		self.assertNode(t)
 		data = list(self.data)
 		random.shuffle(data)
 		for i in data:
 			t._insert(i, i)
+			self.assertNode(t)
 		data.sort()
 		self.assertEqual(list(reversed(data)), list(reversed(t)))
 
 	def test_bool(self):
 		t = self.cls()
+		self.assertNode(t)
 		self.assertFalse(t)
 		t._insert(1, 1)
+		self.assertNode(t)
 		self.assertTrue(t)
 
 	def test_width(self):
 		t = self.cls()
+		self.assertNode(t)
 		self.assertEqual(0, t.width(0, 10))
 		for i in range(10):
 			t._insert(i, i)
+			self.assertNode(t)
 		self.assertEqual(10, t.width(-1, 11))
 		self.assertEqual(10, t.width(0, 10))
 		self.assertEqual(9, t.width(0, 9))
@@ -150,32 +266,26 @@ class TestBinarySearchTree(unittest.TestCase):
 
 	def test_rank_select(self):
 		t = self.cls()
+		self.assertNode(t)
 		self.assertEqual(t.rank(10), 0)
 		self.assertRaises(IndexError, t.select, 0)
 		for i in range(10):
 			t._insert(i, chr(i))
+			self.assertNode(t)
 			self.assertEqual(i + 1, t.rank(10))
 			self.assert_rank_consistent(t._root)
 		self.assertEqual(0, t.rank(-1))
 
-	def assert_rank_consistent(self, n):
-		"""Check that ranks of node `n` are internally consistent.
-
-		Specifically, test that `n.select` and `n.rank` are inverse functions.
-		"""
-		for i in range(len(n)):
-			self.assertEqual(i, n.rank(n.select(i)))
-		for key in n:
-			self.assertEqual(key, n.select(n.rank(key)))
-
 	def test_range(self):
 		t = self.cls()
+		self.assertNode(t)
 		for lo in -1, 0, 1, None:
 			for hi in -1, 0, 1, None:
 				self.assertEqual([], list(t.__iter__(lo=lo, hi=hi)))
 				self.assertEqual([], list(t.__reversed__(lo=lo, hi=hi)))
 		for i in range(3):
 			t._insert(i, i)
+			self.assertNode(t)
 		for lo, hi in (None, None), (-1, 3), (0, 3), (None, 3), (0, None):
 			self.assertEqual([0, 1, 2], list(t.range(lo, hi)))
 			self.assertEqual([2, 1, 0], list(t.range(hi, lo, -1)))
@@ -189,13 +299,14 @@ class TestBinarySearchTree(unittest.TestCase):
 			self.assertEqual([], list(t.range(lo, hi)))
 			self.assertEqual([], list(t.range(hi, lo, -1)))
 
-class TestOrderedMapping(unittest.TestCase):
+class TestOrderedMapping(NodeChecker, unittest.TestCase):
 
 	def setUp(self):
 		self.cls = orderedtable.OrderedMapping
 		self.data = [(i, chr(i)) for i in range(2 * RECURSION_LIMIT)]
 
 	def assert_contents(self, m, contents):
+		self.assertNode(m)
 		self.assertEqual(len(contents), len(m))
 		for k, v in contents.items():
 			self.assertIn(k, m)
@@ -269,13 +380,14 @@ class TestOrderedMapping(unittest.TestCase):
 		self.assertRaises(TypeError, m.__setitem__, [1, 2, 3])
 
 
-class TestOrderedSet(unittest.TestCase):
+class TestOrderedSet(NodeChecker, unittest.TestCase):
 
 	def setUp(self):
 		self.cls = orderedtable.OrderedSet
 		self.data = list(range(2 * RECURSION_LIMIT))
 
 	def assert_contents(self, s, contents):
+		self.assertNode(s)
 		self.assertEqual(len(contents), len(s))
 		for i in contents:
 			self.assertIn(i, s)

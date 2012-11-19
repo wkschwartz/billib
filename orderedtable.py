@@ -68,7 +68,6 @@ class _Node:
 		def insert(self, key, value):
 			n = _Node(key, value)
 			n._color = _Node._BLACK
-			if __debug__: n._check()
 			return n
 
 	def __new__(cls, *args):
@@ -169,7 +168,6 @@ class _Node:
 		"Recursively insert the key-value pair in the subtree rooted at `self`."
 		self = self._insert(key, value)
 		self._color = self._BLACK
-		if __debug__: self._check()
 		return self
 
 	def _insert(self, key, value):
@@ -257,9 +255,7 @@ class _Node:
 		return self._select(k)._key
 
 	def _select(self, k):
-		if __debug__:
-			if k < 0 or k >= len(self):
-				raise self.NodeError('Select index out of bounds')
+		# Assume: 0 <= k < len(self)
 		t = 0 if self._left is None else len(self._left)
 		if t > k:
 			return self._left._select(k)
@@ -291,8 +287,7 @@ class _Node:
 
 	def _rotate_left(self):
 		"""Make a right-leaning link `self` lean to the left."""
-		if __debug__:
-			if not (self._right._color == self._RED): raise self.NodeError
+		# Assume: self._right._color == self._RED
 		x = self._right
 		self._right = x._left
 		x._left = self
@@ -304,8 +299,7 @@ class _Node:
 
 	def _rotate_right(self):
 		"""Make a left-leaning link `self` lean to the right."""
-		if __debug__:
-			if not (self._left._color == self._RED): raise self.NodeError
+		# Assume: self._left._color == self._RED
 		x = self._left
 		self._left = x._right
 		x._right = self
@@ -317,9 +311,7 @@ class _Node:
 
 	def _flip_colors(self):
 		"""Flip the colors of a node `self` and its two children."""
-		if __debug__:
-			if not (self._color != self._left._color == self._right._color):
-				raise self.NodeError
+		# Assume: self._color != self._left._color == self._right._color
 		self._color = not self._color
 		self._left._color = not self._left._color
 		self._right._color = not self._right._color
@@ -336,87 +328,6 @@ class _Node:
 		if h is None:
 			return False
 		return h._color == cls._RED
-
-	####  Check integrity of red-black BST data structure	####
-
-	class NodeError(AssertionError):
-		"A left-leaning red-black tree invariant has been violated unexpectedly."
-
-	def _check(self):
-		"Check integrity of red-black BST data structure."
-		if not self._is_23_BST():
-			raise self.NodeError("Not in symmetric order or not a 2-3 tree")
-		if not self._is_rank_consistent(): raise self.NodeError("Ranks not consistent")
-		if not self._is_balanced(): raise self.NodeError("Not balanced")
-
-	def _is_23_BST(self, min=None, max=None):
-		"""Check that self is a 2-3 tree in symmetric (binary search) order.
-
-		Is `self` a BST?
-		----------------
-		Return whether this binary tree satisfies symmetric order.
-
-		More specifically, return wehther the tree rooted at `self` a BST with
-		all keys strictly between `min` and `max`. When those arguments aren't
-		given (or they are `None`), this constraint is treated as non-binding.
-		Thus, to test the root of a tree, call without argument. Credit: Bob
-		Dondero.
-
-		Is `self` a 2-3 tree?
-		---------------------
-		Return wehther this tree properly models a 2-3 tree with red and black.
-
-		Specifically, return wether the tree rooted at `self` has no red right
-		links and at most one (left) red links in a row on any path.
-
-		Is `self._N` correct?
-		---------------------
-		Return whether the field that tracks container size is correct.
-		"""
-		# Is 2-3 tree?
-		isred = self._isred
-		if isred(self._right): return False
-		if isred(self) and isred(self._left): return False
-		# Is BST?
-		if min is not None and self._key <= min: return False
-		if max is not None and self._key >= max: return False
-		# Is length correct?
-		#if self._N != self._recursive_len():
-		#	return False
-		return ((self._left is None or self._left._is_23_BST(min, self._key)) and
-				(self._right is None or self._right._is_23_BST(self._key, max)))
-
-	def _is_rank_consistent(self):
-		"""Check that ranks are internally consistent.
-
-		Specifically, test that `self.select` and `self.rank` are inverse
-		functions.
-		"""
-		for i in range(len(self)):
-			if i != self.rank(self.select(i)):
-				return False
-		for key in self:
-			if key != self.select(self.rank(key)):
-				return False
-		return True
-
-	def _is_balanced(self):
-		"Return whether all paths self to leaf have the same number of black edges."
-		black = 0
-		x = self
-		while x is not None:
-			if x._color != x._RED:
-				black += 1
-			x = x._left
-		return self._is_balanced_all_paths(black)
-
-	def _is_balanced_all_paths(self, black):
-		"Return whether every path from root to leaf has the given number of black links"
-		if self._color != self._RED:
-			black -= 1
-		l = black == 0 if self._left is None else self._left._is_balanced_all_paths(black)
-		r = black == 0 if self._right is None else self._right._is_balanced_all_paths(black)
-		return l and r
 
 
 class BinarySearchTree:
