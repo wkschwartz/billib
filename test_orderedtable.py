@@ -351,6 +351,21 @@ class TestOrderedMapping(NodeChecker, unittest.TestCase):
 			count += 1
 		self.assertEqual(count, len(contents))
 
+	def test_pickle(self):
+		m = self.cls()
+		self.assertNode(m)
+		pickled = pickle.loads(pickle.dumps(m))
+		self.assertNode(pickled)
+		self.assertEqual(len(pickled), 0)
+		for i in range(6):
+			pickled[i] = chr(i)
+			self.assertNode(pickled)
+			pickled = pickle.loads(pickle.dumps(pickled))
+			self.assertNode(pickled)
+			self.assertEqual(len(pickled), i + 1)
+			for j in range(i):
+				self.assertEqual(chr(j), pickled[j])
+
 	def test_create_empty_and_add(self):
 		m = self.cls()
 		contents = {}
@@ -415,6 +430,21 @@ class TestOrderedSet(NodeChecker, unittest.TestCase):
 			self.assertIn(i, contents)
 			count += 1
 		self.assertEqual(count, len(contents))
+
+	def test_pickle(self):
+		s = self.cls()
+		self.assertNode(s)
+		pickled = pickle.loads(pickle.dumps(s))
+		self.assertNode(pickled)
+		self.assertEqual(len(pickled), 0)
+		for i in range(6):
+			pickled.add(i)
+			self.assertNode(pickled)
+			pickled = pickle.loads(pickle.dumps(pickled))
+			self.assertNode(pickled)
+			self.assertEqual(len(pickled), i + 1)
+			for j in range(i):
+				self.assertEqual(j, pickled.search(j))
 
 	def test_create_empty_and_add(self):
 		s = self.cls()
