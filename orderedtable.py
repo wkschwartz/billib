@@ -24,7 +24,7 @@ class _Node:
 	"""A left-leaning red-black BST. This is the 2-3 version.
 
 	You usually will not need this class directly. Instead, subclass the
-	`BinarySearchTree` class below. However, subclassing the preesnt class may
+	`BinarySearchTree` class below. However, subclassing the present class may
 	be useful for adding functionality with recursive algorithms. In that case,
 	also subclass `BinarySearchTree` and repalce its `__init__` method.
 
