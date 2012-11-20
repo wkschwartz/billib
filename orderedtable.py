@@ -243,7 +243,7 @@ class _Node:
 			raise TypeError('Key %r not in a total order' % key)
 
 	def select(self, k):
-		"Return the key in the tree with the given rank k."
+		"Return the key with rank k. Raise IndexError if k out of bounds."
 		if k < 0 or k >= len(self):
 			raise IndexError('Requested rank %r out of bounds' % k)
 		return self._select(k)._key
@@ -386,7 +386,7 @@ class BinarySearchTree:
 		return self._root.rank(key)
 
 	def select(self, k):
-		"Return the key in the tree with the given rank k."
+		"Return the key with rank k. Raise IndexError if k out of bounds."
 		return self._root.select(k)
 
 	def range(self, *args):
