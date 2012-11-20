@@ -35,6 +35,7 @@ class _NullNode:
 	def floor(self, key): raise KeyError(key)
 	def ceiling(self, key): raise KeyError(key)
 	def rank(self, key): return 0
+	def index(self, key, start=None, stop=None): raise KeyError(key)
 	def select(self, k): raise IndexError('Select index %r out of bounds' % k)
 	def height(self): return 0
 	def search(self, key): raise KeyError(key)
@@ -271,6 +272,19 @@ class _Node:
 		else: raise TypeError("Key %r not in total order with tree's keys, such"
 							  " as %r." % (key, self._key))
 
+	def index(self, key, start=None, stop=None):
+		"""Index i of key in self, optionally such that start <= i < stop.
+
+		This is essentially the rank method with the same semantics as
+		`list.index`. if `key` is not present, a `KeyError` is raised.
+		"""
+		if key not in self:
+			raise KeyError(key)
+		r = self.rank(key)
+		if start is not None and start > r or stop is not None and r >= stop:
+			raise KeyError(key)
+		return r
+
 	def width(self, lo, hi):
 		"The number of keys k such that lo <= k < hi."
 		if lo > hi:
@@ -399,6 +413,14 @@ class BinarySearchTree:
 		else:
 			raise ValueError('{.__name__!s} objects only support range steps of '
 							 '1 and -1, not {!r}'.format(type(self), s.step))
+
+	def index(self, key, start=None, stop=None):
+		"""Index i of key in self, optionally such that start <= i < stop.
+
+		This is essentially the rank method with the same semantics as
+		`list.index`. if `key` is not present, a `KeyError` is raised.
+		"""
+		return self._root.index(key, start, stop)
 
 	def width(self, lo, hi):
 		"The number of keys k such that lo <= k < hi."

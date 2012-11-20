@@ -309,6 +309,26 @@ class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 			self.assertRaises(IndexError, t.select, i + 1)
 		self.assertEqual(0, t.rank(-1))
 
+	def test_index(self):
+		t = self.cls()
+		self.assertNode(t)
+		self.assertRaises(KeyError, t.index, 1)
+		self.assertRaises(KeyError, t.index, 1, 0)
+		self.assertRaises(KeyError, t.index, 1, stop=2)
+		self.assertRaises(KeyError, t.index, 1, 0, 2)
+		t._insert(1, chr(1))
+		self.assertNode(t)
+		self.assertEqual(t.index(1), 0)
+		self.assertRaises(KeyError, t.index, 0)
+		t._insert(0, chr(0))
+		self.assertNode(t)
+		self.assertEqual(t.index(0), 0)
+		self.assertEqual(t.index(1), 1)
+		self.assertEqual(t.index(1, 1, 2), 1)
+		self.assertRaises(KeyError, t.index, 0, 1, 2)
+		self.assertRaises(KeyError, t.index, 1, 0, 1)
+		self.assertRaises(KeyError, t.index, 1, 2, 1)
+
 	def test_range(self):
 		t = self.cls()
 		self.assertNode(t)
