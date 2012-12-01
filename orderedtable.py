@@ -181,6 +181,10 @@ class _Node:
 		else:
 			raise TypeError("{.__name__!r} can't contain unorderable keys of "
 							"type {.__name__!r}".format(type(self), type(key)))
+		return self._fixup()
+
+	def _fixup(self):
+		"Shared code for enforcing the LLRB Tree invariants on the way up the tree."
 		isred = self._isred
 		if isred(self._right) and not isred(self._left):
 			self = self._rotate_left()
