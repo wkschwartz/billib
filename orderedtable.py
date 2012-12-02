@@ -285,6 +285,19 @@ class _Node:
 
 	#### Red-black helper methods ####
 
+	def _move_red_left(self):
+		"""Move a child's red link to the left of self.
+
+		If self is red and self._left self._left._left are black, make
+		self._left or one of its children red.
+		"""
+		self._flip_colors()
+		if self._right is not None and self._isred(self._right._left):
+			self._right = self._right._rotate_right()
+			self = self._rotate_left()
+			self._flip_colors()
+		return self
+
 	def _fixup(self):
 		"Shared code for enforcing the LLRB Tree invariants on the way up the tree."
 		isred = self._isred
