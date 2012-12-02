@@ -183,18 +183,6 @@ class _Node:
 							"type {.__name__!r}".format(type(self), type(key)))
 		return self._fixup()
 
-	def _fixup(self):
-		"Shared code for enforcing the LLRB Tree invariants on the way up the tree."
-		isred = self._isred
-		if isred(self._right) and not isred(self._left):
-			self = self._rotate_left()
-		if isred(self._left) and isred(self._left._left):
-			self = self._rotate_right()
-		if isred(self._left) and isred(self._right):
-			self._flip_colors()
-		self._N = self._recursive_len()
-		return self
-
 	#### Ordered symbol table methods ####
 
 	def min(self):
@@ -296,6 +284,18 @@ class _Node:
 		return self.rank(hi) - self.rank(lo)
 
 	#### Red-black helper methods ####
+
+	def _fixup(self):
+		"Shared code for enforcing the LLRB Tree invariants on the way up the tree."
+		isred = self._isred
+		if isred(self._right) and not isred(self._left):
+			self = self._rotate_left()
+		if isred(self._left) and isred(self._left._left):
+			self = self._rotate_right()
+		if isred(self._left) and isred(self._right):
+			self._flip_colors()
+		self._N = self._recursive_len()
+		return self
 
 	def _rotate_left(self):
 		"""Make a right-leaning link `self` lean to the left."""
