@@ -179,6 +179,52 @@ class _Node:
 							"type {.__name__!r}".format(type(self), type(key)))
 		return self._fixup()
 
+	def delete(self, key):
+		"Delete the corresponding with key."
+		self.search(key) # Raise a KeyError if key not in self.
+		self = self._delete(key)
+		self._color = self._BLACK
+		return self
+
+	def _delete(self, key):
+		isred = self._isred
+		if key < self._key:
+			if (not isred(self._left) and self._left is not None and
+					not isred(self._left._left)):
+				self = self._move_red_left()
+			self._left = self._left._delete(key)
+		else:
+			if isred(self._left):
+				self = self._rotate_right()
+			if key == self._key and self._right is None:
+				self = self._move_red_right()
+			if (not isred(self._right) and self._right is not None and
+					not isred(self._right._left):
+				self = self._move_red_right()
+			if key == self._key:
+				rightmin = self._right.min()
+				self._value = self._right.search(rightmin)
+				self._key = rightmin
+				self._right = self._right._delmin()
+			else:
+				self._right = self._right._delete(key)
+		return self._fixup()
+
+	def delmin(self):
+		"Delete the key-value pair associated with the minimum key."
+		self = self._delmin()
+		self._color = self._BLACK
+		return self
+
+	def _delmin(self):
+		if self._left is None: return None
+		isred = self._isred
+		if (not isred(self._left) and self._left is not None and
+			    not isred(self._left._left)):
+			self = self._move_red_left()
+		self._left = self._left._delmin()
+		return self._fixup()
+
 	#### Ordered symbol table methods ####
 
 	def min(self):
