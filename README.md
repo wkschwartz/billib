@@ -3,6 +3,11 @@ billib
 
 My personal library of random scripts, functions, and thoughts.
 
+	"And you must be Clay?" It's in the code--there's a method called
+	`clay_is_awesome`. I assume every programmer writes one of those.
+
+Robin Sloan, "Mr. Penumbra's 24-Hour Bookstore."
+
 Contents
 --------
 
