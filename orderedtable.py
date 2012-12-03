@@ -8,10 +8,6 @@ data types support the mapping and set interfaces respectively. They do not
 You may create your own ordered symbol table client interface by subclassing the
 `BinarySearchTree` class.
 
-Note that the BST code has been instrumented with very thorough -- but very
-slow -- integrity checks. These are turned off when Python is run with
-optimizations turned on (e.g., by the -O command line switch).
-
 The tests for this code have been run successfully on Python 3.3 and 3.2.
 """
 
