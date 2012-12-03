@@ -400,37 +400,21 @@ class BinarySearchTree:
 		"""
 		return self._root.__reversed__(lo=lo, hi=hi)
 
-	def _search(self, key):
-		"Return value associated with `key`; Raise `KeyError` if key not found."
-		return self._root.search(key)
-
-	def _insert(self, key, value):
+	def insert(self, key, value):
 		"Insert the key-value pair, replacing if key already present."
 		self._root = self._root.insert(key, value)
+	
+	def __getattr__(self, name):
+		"Provide transparent access to the methods of the root of the tree."
+		if not name.startswith('_'):
+			return getattr(self._root, name)
+		else:
+			raise AttributeError(name)
 
-	def min(self):
-		"Return the least key."
-		return self._root.min()
-
-	def max(self):
-		"Return the greatest key."
-		return self._root.max()
-
-	def floor(self, key):
-		"Return the greatest key <= the given key. Raise a KeyError if none present."
-		return self._root.floor(key)
-
-	def ceiling(self, key):
-		"Return the least key >= the given key. Raise a KeyError if none present."
-		return self._root.ceiling(key)
-
-	def rank(self, key):
-		"Return number of keys in the tree that are less than the given key."
-		return self._root.rank(key)
-
-	def select(self, k):
-		"Return the key with rank k. Raise IndexError if k out of bounds."
-		return self._root.select(k)
+	def __dir__(self):
+		"List the public attributes of the root of the tree too."
+		root_attrs = [n for n in dir(self._root) if not n.startswith('_')]
+		return list(set(super().__dir__() + root_attrs))
 
 	def range(self, *args):
 		"Return iterator over keys with arguments like builtin.range()."
@@ -443,17 +427,6 @@ class BinarySearchTree:
 			raise ValueError('{.__name__!s} objects only support range steps of '
 							 '1 and -1, not {!r}'.format(type(self), s.step))
 
-	def index(self, key, start=None, stop=None):
-		"""Index i of key in self, optionally such that start <= i < stop.
-
-		This is essentially the rank method with the same semantics as
-		`list.index`. if `key` is not present, a `KeyError` is raised.
-		"""
-		return self._root.index(key, start, stop)
-
-	def width(self, lo, hi):
-		"The number of keys k such that lo <= k < hi."
-		return self._root.width(lo, hi)
 
 class OrderedMapping(BinarySearchTree, Mapping):
 
@@ -487,10 +460,10 @@ class OrderedMapping(BinarySearchTree, Mapping):
 								' or iterables of pairs.'.format(type(self)))
 			self[k] = v
 
-	def __getitem__(self, key): return self._search(key)
+	def __getitem__(self, key): return self.search(key)
 
 	def __setitem__(self, key, value):
-		self._insert(key, value)
+		self.insert(key, value)
 
 
 class OrderedSet(BinarySearchTree, Set):
@@ -510,14 +483,10 @@ class OrderedSet(BinarySearchTree, Set):
 
 	def add(self, item):
 		"Add an item to the set, replacing older items that are equal."
-		self._insert(item, item)
+		self.insert(item, item)
 
 	def __ior__(self, other):
 		"Update self with new and replacement values from other (in-place union)."
 		for value in other:
 			self.add(value)
 		return self
-
-	def search(self, item):
-		"If there is an equal item in self, return it. Else raise KeyError."
-		return self._search(item)
