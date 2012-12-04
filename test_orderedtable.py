@@ -1,14 +1,12 @@
 #! /usr/bin/env python3
 
-import unittest
+from unittest import TestCase as _TestCase, main
+from pickle import loads as _pickle_loads, dumps as _pickle_dumps
+from random import shuffle as _shuffle
+from sys import getrecursionlimit as _getrecursionlimit
+from math import log as _log
+
 import orderedtable
-import random
-import sys
-import math
-import pickle
-
-
-RECURSION_LIMIT = sys.getrecursionlimit()
 
 
 class NodeChecker:
@@ -101,7 +99,7 @@ class NodeChecker:
 		return l and r
 
 
-class TestBinarySearchTree(NodeChecker, unittest.TestCase):
+class TestBinarySearchTree(NodeChecker, _TestCase):
 
 	def setUp(self):
 		self.cls = orderedtable.BinarySearchTree
@@ -125,13 +123,13 @@ class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 	def test_pickle(self):
 		t = self.cls()
 		self.assertNode(t)
-		pickled = pickle.loads(pickle.dumps(t))
+		pickled = _pickle_loads(_pickle_dumps(t))
 		self.assertNode(pickled)
 		self.assertEqual(len(pickled), 0)
 		for i in range(6):
 			pickled.insert(i, chr(i))
 			self.assertNode(pickled)
-			pickled = pickle.loads(pickle.dumps(pickled))
+			pickled = _pickle_loads(_pickle_dumps(pickled))
 			self.assertNode(pickled)
 			self.assertEqual(len(pickled), i + 1)
 			for j in range(i):
@@ -144,29 +142,29 @@ class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 	def test_int_keys_rand_order(self):
 		for i in range(len(self.data)):
 			data = list(self.data[:i])
-			random.shuffle(data)
+			_shuffle(data)
 			self._int_keys(data)
 
 	def test_height_after_random_insert(self):
-		data = list(range(2 * RECURSION_LIMIT))
+		data = list(range(2 * _getrecursionlimit()))
 		size = len(data)
-		random.shuffle(data)
+		_shuffle(data)
 		t = self.cls()
 		self.assertNode(t)
 		for i in data:
 			t.insert(i, i)
 			self.assertNode(t)
-		self.assertLessEqual(t._root.height(), 2.0 * math.log(size, 2))
+		self.assertLessEqual(t._root.height(), 2.0 * _log(size, 2))
 
 	def test_height_after_ordered_insert(self):
-		data = list(range(2 * RECURSION_LIMIT))
+		data = list(range(2 * _getrecursionlimit()))
 		size = len(data)
 		t = self.cls()
 		self.assertNode(t)
 		for i in data:
 			t.insert(i, i)
 			self.assertNode(t)
-		self.assertLessEqual(t._root.height(), 2.0 * math.log(size, 2))
+		self.assertLessEqual(t._root.height(), 2.0 * _log(size, 2))
 
 	def _int_keys(self, data):
 		t = self.cls()
@@ -180,7 +178,7 @@ class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 			t.insert(j, data[j])
 			self.assertNode(t)
 			if j > 1:
-				self.assertLess(t._root.height(), 2.0 * math.log(j + 1, 2))
+				self.assertLess(t._root.height(), 2.0 * _log(j + 1, 2))
 			else:
 				self.assertEqual(t._root.height(), j + 1)
 			self.assertEqual(data[j], t.search(j))
@@ -229,7 +227,7 @@ class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 		self.assertRaises(ValueError, t.min)
 		self.assertRaises(ValueError, t.max)
 		data = list(self.data)
-		random.shuffle(data)
+		_shuffle(data)
 		for item in data:
 			t.insert(item, ord(item))
 			self.assertNode(t)
@@ -259,7 +257,7 @@ class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 		t = self.cls()
 		self.assertNode(t)
 		data = list(self.data)
-		random.shuffle(data)
+		_shuffle(data)
 		for i in data:
 			t.insert(i, i)
 			self.assertNode(t)
@@ -268,7 +266,7 @@ class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 		t = self.cls()
 		self.assertNode(t)
 		data = list(self.data)
-		random.shuffle(data)
+		_shuffle(data)
 		for i in data:
 			t.insert(i, i)
 			self.assertNode(t)
@@ -354,11 +352,11 @@ class TestBinarySearchTree(NodeChecker, unittest.TestCase):
 			self.assertEqual([], list(t.range(lo, hi)))
 			self.assertEqual([], list(t.range(hi, lo, -1)))
 
-class TestOrderedMapping(NodeChecker, unittest.TestCase):
+class TestOrderedMapping(NodeChecker, _TestCase):
 
 	def setUp(self):
 		self.cls = orderedtable.OrderedMapping
-		self.data = [(i, chr(i)) for i in range(2 * RECURSION_LIMIT)]
+		self.data = [(i, chr(i)) for i in range(2 * _getrecursionlimit())]
 
 	def assert_contents(self, m, contents):
 		self.assertNode(m)
@@ -391,13 +389,13 @@ class TestOrderedMapping(NodeChecker, unittest.TestCase):
 	def test_pickle(self):
 		m = self.cls()
 		self.assertNode(m)
-		pickled = pickle.loads(pickle.dumps(m))
+		pickled = _pickle_loads(_pickle_dumps(m))
 		self.assertNode(pickled)
 		self.assertEqual(len(pickled), 0)
 		for i in range(6):
 			pickled[i] = chr(i)
 			self.assertNode(pickled)
-			pickled = pickle.loads(pickle.dumps(pickled))
+			pickled = _pickle_loads(_pickle_dumps(pickled))
 			self.assertNode(pickled)
 			self.assertEqual(len(pickled), i + 1)
 			for j in range(i):
@@ -450,11 +448,11 @@ class TestOrderedMapping(NodeChecker, unittest.TestCase):
 		self.assertRaises(TypeError, m.__setitem__, [1, 2, 3])
 
 
-class TestOrderedSet(NodeChecker, unittest.TestCase):
+class TestOrderedSet(NodeChecker, _TestCase):
 
 	def setUp(self):
 		self.cls = orderedtable.OrderedSet
-		self.data = list(range(2 * RECURSION_LIMIT))
+		self.data = list(range(2 * _getrecursionlimit()))
 
 	def assert_contents(self, s, contents):
 		self.assertNode(s)
@@ -471,13 +469,13 @@ class TestOrderedSet(NodeChecker, unittest.TestCase):
 	def test_pickle(self):
 		s = self.cls()
 		self.assertNode(s)
-		pickled = pickle.loads(pickle.dumps(s))
+		pickled = _pickle_loads(_pickle_dumps(s))
 		self.assertNode(pickled)
 		self.assertEqual(len(pickled), 0)
 		for i in range(6):
 			pickled.add(i)
 			self.assertNode(pickled)
-			pickled = pickle.loads(pickle.dumps(pickled))
+			pickled = _pickle_loads(_pickle_dumps(pickled))
 			self.assertNode(pickled)
 			self.assertEqual(len(pickled), i + 1)
 			for j in range(i):
@@ -517,9 +515,9 @@ class TestOrderedSet(NodeChecker, unittest.TestCase):
 		self.assertRaises(TypeError, self.cls.__ior__, 1)
 
 	def test_sort(self):
-		data = list(range(2 * RECURSION_LIMIT))
+		data = list(range(2 * _getrecursionlimit()))
 		rnddata = list(data)
-		random.shuffle(rnddata)
+		_shuffle(rnddata)
 		self.assertNotEqual(data, rnddata)
 		self.assertEqual(data, list(self.cls(rnddata)))
 		self.assertEqual(list(reversed(data)), list(reversed(self.cls(rnddata))))
@@ -530,4 +528,4 @@ class TestOrderedSet(NodeChecker, unittest.TestCase):
 
 
 if __name__ == '__main__':
-	unittest.main()
+	main()
