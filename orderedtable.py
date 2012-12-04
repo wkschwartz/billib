@@ -12,7 +12,7 @@ The tests for this code have been run successfully on Python 3.3 and 3.2.
 """
 
 
-from collections import Mapping, Set
+from collections import Mapping as _MappingABC, Set as _SetABC
 
 
 class _NullNode:
@@ -424,7 +424,7 @@ class BinarySearchTree:
 							 '1 and -1, not {!r}'.format(type(self), s.step))
 
 
-class OrderedMapping(BinarySearchTree, Mapping):
+class OrderedMapping(BinarySearchTree, _MappingABC):
 
 	"Mapping of totally ordered keys, which need not be hashable."
 
@@ -446,7 +446,7 @@ class OrderedMapping(BinarySearchTree, Mapping):
 		pairs. If keys are repeated, later copies replace earlier ones. The keys
 		must be totally ordered but they need not be hashable.
 		"""
-		if isinstance(iterable, Mapping):
+		if isinstance(iterable, _MappingABC):
 			iterable = iterable.items()
 		for item in iterable:
 			try:
@@ -462,7 +462,7 @@ class OrderedMapping(BinarySearchTree, Mapping):
 		self.insert(key, value)
 
 
-class OrderedSet(BinarySearchTree, Set):
+class OrderedSet(BinarySearchTree, _SetABC):
 
 	"Set of totally ordered values, which need not be hashable."
 
