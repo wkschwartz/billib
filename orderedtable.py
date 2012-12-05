@@ -227,6 +227,20 @@ class _Node:
 
 	#### Ordered symbol table methods ####
 
+	def popmin(self):
+		"Pop the (key, value) tuple corresponding with the minimum key."
+		key = self.min()
+		value = self[key]
+		self.delmin()
+		return (key, value)
+
+	def popmax(self):
+		"Pop the (key, value) tuple corresponding with the maximum key."
+		key = self.max()
+		value = self[key]
+		self.delete(key)
+		return (key, value)
+
 	def min(self):
 		"Return the least key."
 		if self._left is None:
