@@ -588,3 +588,4 @@ class OrderedSet(BinarySearchTree, _SetABC):
 		"Return set-like string representation."
 		clsname = self.__class__.__name__
 		return clsname + '({' + ', '.join(map(repr, self)) + '})'
+
