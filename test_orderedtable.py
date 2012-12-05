@@ -111,7 +111,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		self.assertEqual([], list(t))
 		self.assertEqual(0, len(t))
 		for i in range(10):
-			t.insert(i, chr(i))
+			t._insert(i, chr(i))
 		self.assertNode(t)
 		self.assertEqual(list(range(10)), list(t))
 		self.assertEqual(10, len(t))
@@ -127,13 +127,13 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		self.assertNode(pickled)
 		self.assertEqual(len(pickled), 0)
 		for i in range(6):
-			pickled.insert(i, chr(i))
+			pickled._insert(i, chr(i))
 			self.assertNode(pickled)
 			pickled = _pickle_loads(_pickle_dumps(pickled))
 			self.assertNode(pickled)
 			self.assertEqual(len(pickled), i + 1)
 			for j in range(i):
-				self.assertEqual(chr(j), pickled.search(j))
+				self.assertEqual(chr(j), pickled._search(j))
 
 	def test_int_keys_in_order(self):
 		for i in range(len(self.data)):
@@ -152,7 +152,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		t = self.cls()
 		self.assertNode(t)
 		for i in data:
-			t.insert(i, i)
+			t._insert(i, i)
 			self.assertNode(t)
 		self.assertLessEqual(t._root.height(), 2.0 * _log(size, 2))
 
@@ -162,7 +162,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		t = self.cls()
 		self.assertNode(t)
 		for i in data:
-			t.insert(i, i)
+			t._insert(i, i)
 			self.assertNode(t)
 		self.assertLessEqual(t._root.height(), 2.0 * _log(size, 2))
 
@@ -175,51 +175,51 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 			self.assertEqual(j, len(t))
 			self.assertNotIn(j, t)
 			self.assertEqual(list(range(j)), list(t))
-			t.insert(j, data[j])
+			t._insert(j, data[j])
 			self.assertNode(t)
 			if j > 1:
 				self.assertLess(t._root.height(), 2.0 * _log(j + 1, 2))
 			else:
 				self.assertEqual(t._root.height(), j + 1)
-			self.assertEqual(data[j], t.search(j))
+			self.assertEqual(data[j], t._search(j))
 			self.assertIn(j, t)
 		self.assertEqual(i, len(t))
 		self.assertEqual(list(range(len(data))), list(t))
-		self.assertRaises(KeyError, t.search, i + 1)
+		self.assertRaises(KeyError, t._search, i + 1)
 
 	def test_insert_replaces(self):
 		t = self.cls()
 		self.assertNode(t)
-		t.insert(1, 'a')
+		t._insert(1, 'a')
 		self.assertNode(t)
-		self.assertEqual('a', t.search(1))
-		t.insert(1, 'b')
+		self.assertEqual('a', t._search(1))
+		t._insert(1, 'b')
 		self.assertNode(t)
-		self.assertEqual('b', t.search(1))
+		self.assertEqual('b', t._search(1))
 
 	def test_only_ordered_keys(self):
 		t = self.cls()
 		self.assertNode(t)
 		for k in None, object(), type, {}:
-			self.assertRaises(TypeError, t.search, k, 'a')
-			self.assertRaises(TypeError, t.insert, k, 'a')
+			self.assertRaises(TypeError, t._search, k, 'a')
+			self.assertRaises(TypeError, t._insert, k, 'a')
 
 	def test_disjoint_keys(self):
 		t = self.cls()
 		self.assertNode(t)
-		t.insert({1}, 'a')
+		t._insert({1}, 'a')
 		self.assertNode(t)
-		self.assertRaises(KeyError, t.search, set())
-		self.assertRaises(TypeError, t.search, {2})
-		self.assertRaises(TypeError, t.insert, {2})
+		self.assertRaises(KeyError, t._search, set())
+		self.assertRaises(TypeError, t._search, {2})
+		self.assertRaises(TypeError, t._insert, {2})
 
 	def test_unhashable_keys(self):
 		t = self.cls()
 		self.assertNode(t)
 		for k in [], [1], [2]:
-			t.insert(k, 'a')
+			t._insert(k, 'a')
 			self.assertNode(t)
-			self.assertEqual(t.search(k), 'a')
+			self.assertEqual(t._search(k), 'a')
 
 	def test_min_max(self):
 		t = self.cls()
@@ -229,7 +229,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		data = list(self.data)
 		_shuffle(data)
 		for item in data:
-			t.insert(item, ord(item))
+			t._insert(item, ord(item))
 			self.assertNode(t)
 		self.assertEqual(min(data), t.min())
 		self.assertEqual(max(data), t.max())
@@ -240,7 +240,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		self.assertRaises(KeyError, t.floor, 10)
 		self.assertRaises(KeyError, t.ceiling, 10)
 		for i in -1, 5, 10:
-			t.insert(i, range(i))
+			t._insert(i, range(i))
 			self.assertNode(t)
 		for i, f in {100: 10, 10.00001: 10, 10: 10, 9.9999: 5, 8: 5, 5: 5, 0: -1,
 					 -0.99999: -1, -1: -1}.items():
@@ -259,7 +259,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		data = list(self.data)
 		_shuffle(data)
 		for i in data:
-			t.insert(i, i)
+			t._insert(i, i)
 			self.assertNode(t)
 		data.sort()
 		self.assertEqual(data, list(t))
@@ -268,7 +268,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		data = list(self.data)
 		_shuffle(data)
 		for i in data:
-			t.insert(i, i)
+			t._insert(i, i)
 			self.assertNode(t)
 		data.sort()
 		self.assertEqual(list(reversed(data)), list(reversed(t)))
@@ -277,7 +277,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		t = self.cls()
 		self.assertNode(t)
 		self.assertFalse(t)
-		t.insert(1, 1)
+		t._insert(1, 1)
 		self.assertNode(t)
 		self.assertTrue(t)
 
@@ -286,7 +286,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		self.assertNode(t)
 		self.assertEqual(0, t.width(0, 10))
 		for i in range(10):
-			t.insert(i, i)
+			t._insert(i, i)
 			self.assertNode(t)
 		self.assertEqual(10, t.width(-1, 11))
 		self.assertEqual(10, t.width(0, 10))
@@ -301,7 +301,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		self.assertEqual(t.rank(10), 0)
 		self.assertRaises(IndexError, t.select, 0)
 		for i in range(10):
-			t.insert(i, chr(i))
+			t._insert(i, chr(i))
 			self.assertNode(t)
 			self.assertEqual(i + 1, t.rank(10))
 			self.assertEqual(i, t.select(i))
@@ -316,11 +316,11 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		self.assertRaises(KeyError, t.index, 1, 0)
 		self.assertRaises(KeyError, t.index, 1, stop=2)
 		self.assertRaises(KeyError, t.index, 1, 0, 2)
-		t.insert(1, chr(1))
+		t._insert(1, chr(1))
 		self.assertNode(t)
 		self.assertEqual(t.index(1), 0)
 		self.assertRaises(KeyError, t.index, 0)
-		t.insert(0, chr(0))
+		t._insert(0, chr(0))
 		self.assertNode(t)
 		self.assertEqual(t.index(0), 0)
 		self.assertEqual(t.index(1), 1)
@@ -337,7 +337,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 				self.assertEqual([], list(t.range(lo, hi)))
 				self.assertEqual([], list(t.range(lo, hi, -1)))
 		for i in range(3):
-			t.insert(i, i)
+			t._insert(i, i)
 			self.assertNode(t)
 		for lo, hi in (None, None), (-1, 3), (0, 3), (None, 3), (0, None):
 			self.assertEqual([0, 1, 2], list(t.range(lo, hi)))
