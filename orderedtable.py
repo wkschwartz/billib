@@ -548,6 +548,12 @@ class OrderedMapping(BinarySearchTree, _MappingABC):
 	def __setitem__(self, key, value):
 		self._insert(key, value)
 
+	def __repr__(self):
+		"Return dict-like string representation."
+		clsname = self.__class__.__name__
+		items = (': '.join([repr(k), repr(v)]) for k, v in self.items())
+		return clsname + '({' + ', '.join(items) + '})'
+
 
 class OrderedSet(BinarySearchTree, _SetABC):
 
@@ -577,3 +583,8 @@ class OrderedSet(BinarySearchTree, _SetABC):
 	def search(self, item):
 		"If there is an equal item in self, return it. Else raise KeyError."
 		return self._search(item)
+
+	def __repr__(self):
+		"Return set-like string representation."
+		clsname = self.__class__.__name__
+		return clsname + '({' + ', '.join(map(repr, self)) + '})'
