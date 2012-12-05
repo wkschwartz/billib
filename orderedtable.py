@@ -199,7 +199,7 @@ class _Node:
 			if key == self._key and self._right is None:
 				self = self._move_red_right()
 			if (not isred(self._right) and self._right is not None and
-					not isred(self._right._left):
+					not isred(self._right._left)):
 				self = self._move_red_right()
 			if key == self._key:
 				rightmin = self._right.min()
