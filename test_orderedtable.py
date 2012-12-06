@@ -200,6 +200,12 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 	def test_only_ordered_keys(self):
 		t = self.cls()
 		self.assertNode(t)
+		# Test a NullNode then insert and test a regular one.
+		for k in None, object(), type, {}:
+			self.assertRaises(TypeError, t.get, k, 'a')
+			self.assertRaises(TypeError, t._insert, k, 'a')
+		t._insert(1, 'b')
+		self.assertNode(t)
 		for k in None, object(), type, {}:
 			self.assertRaises(TypeError, t.get, k, 'a')
 			self.assertRaises(TypeError, t._insert, k, 'a')

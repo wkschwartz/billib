@@ -37,9 +37,13 @@ class _NullNode:
 	def index(self, key, start=None, stop=None): raise KeyError(key)
 	def select(self, k): raise IndexError('Select index %r out of bounds' % k)
 	def height(self): return 0
-	def get(self, key): raise KeyError(key)
 	def delete(self, key): raise KeyError(key)
 	def width(self, lo, hi): return 0
+
+	def get(self, key):
+		"Raise TypeError for unorderable keys if possoble, otherwise KeyError."
+		key < key
+		raise KeyError(key)
 
 	def insert(self, key, value):
 		n = _Node(key, value)
