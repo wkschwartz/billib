@@ -1,11 +1,11 @@
-"""Ordered symbol table data types.
+"""Sorted symbol table data types.
 
-You may use `OrderedMapping` or `OrderdSet` directly for keys or elements
+You may use `SortedMapping` or `SortedSet` directly for keys or elements
 (respectively) that are totally ordered but not necessarily hashable. These
 data types support the mapping and set interfaces respectively. Immutable
-versions are provided too in `OrderedFrozenSet` and `OrderedFrozenMapping`.
+versions are provided too in `SortedFrozenSet` and `SortedFrozenMapping`.
 
-You may create your own ordered symbol table client interface by subclassing the
+You may create your own sorted symbol table client interface by subclassing the
 `BinarySearchTree` class and providing public methods that access its public
 `get` and private `_set_` and `_delete` methods.
 
@@ -234,7 +234,7 @@ class _Node:
 		self._left = self._left._delmin()
 		return self._fixup()
 
-	#### Ordered symbol table methods ####
+	#### Sorted symbol table methods ####
 
 	def popmin(self):
 		"Pop the (key, value) tuple corresponding with the minimum key."
@@ -534,16 +534,16 @@ class BinarySearchTree:
 		"The number of keys k such that lo <= k < hi."
 		return self._root.width(lo, hi)
 
-class OrderedFrozenMapping(BinarySearchTree, _MappingABC):
+class SortedFrozenMapping(BinarySearchTree, _MappingABC):
 
 	"Mapping of totally ordered keys, which need not be hashable."
 
 	def __init__(self, iterable=()):
-		"""Instantiate a new OrderedFrozenMapping optionally with key-value pairs.
+		"""Instantiate a new SortedFrozenMapping optionally with key-value pairs.
 
 		`iterable` is an optional argument that is either a mapping or is an
 		iterable containing two-item iterables: The first item is the key and
-		the second the value. The `OrderedFrozenMapping` will contain these key-value
+		the second the value. The `SortedFrozenMapping` will contain these key-value
 		pairs. If keys are repeated, later copies replace earlier ones. The keys
 		must be totally ordered but they need not be hashable.
 		"""
@@ -577,9 +577,9 @@ class OrderedFrozenMapping(BinarySearchTree, _MappingABC):
 		return clsname + '({' + ', '.join(items) + '})'
 
 
-class OrderedMapping(OrderedFrozenMapping, _MutableMappingABC):
+class SortedMapping(SortedFrozenMapping, _MutableMappingABC):
 
-	"Mutable ordered mapping. Add insertion and deletion to OrderedFrozenMappings."
+	"Mutable sorted mapping. Add insertion and deletion to SortedFrozenMappings."
 
 	def __delitem__(self, key):
 		"Remove key from the mapping. Raise a KeyError if key is not in the map."
@@ -601,15 +601,15 @@ class OrderedMapping(OrderedFrozenMapping, _MutableMappingABC):
 		self._update(iterable)
 
 
-class OrderedFrozenSet(BinarySearchTree, _SetABC):
+class SortedFrozenSet(BinarySearchTree, _SetABC):
 
 	"Set of totally ordered values, which need not be hashable."
 
 	def __init__(self, iterable=()):
-		"""Instantiate a new OrderedSet, optionally with values.
+		"""Instantiate a new SortedSet, optionally with values.
 
 		`iterable` is an optional argument containing an iterable of values to
-		fill up the new `OrderedFrozenSet`. If values are repeated (in terms of
+		fill up the new `SortedFrozenSet`. If values are repeated (in terms of
 		equality but not identity), later values replace earlier ones. The
 		values must be totally ordered but they need not be hashable.
 		"""
@@ -623,9 +623,9 @@ class OrderedFrozenSet(BinarySearchTree, _SetABC):
 		return clsname + '({' + ', '.join(map(repr, self)) + '})'
 
 
-class OrderedSet(OrderedFrozenSet, _MutableSetABC):
+class SortedSet(SortedFrozenSet, _MutableSetABC):
 
-	"Mutable ordered set. Add insertion and deletion to OrderedFrozenSet."
+	"Mutable sorted set. Add insertion and deletion to SortedFrozenSet."
 
 	def add(self, item):
 		"Add an item to the set, replacing older items that are equal."
