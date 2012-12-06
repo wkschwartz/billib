@@ -6,7 +6,7 @@ from random import shuffle as _shuffle
 from sys import getrecursionlimit as _getrecursionlimit
 from math import log as _log
 
-import orderedtable
+import sortedtable
 
 
 class NodeChecker:
@@ -18,9 +18,9 @@ class NodeChecker:
 
 	def assertNode(self, h):
 		"Check integrity of red-black BST data structure."
-		if isinstance(h, orderedtable.BinarySearchTree):
+		if isinstance(h, sortedtable.BinarySearchTree):
 			h = h._root
-		if isinstance(h, orderedtable._NullNode):
+		if isinstance(h, sortedtable._NullNode):
 			return True
 		if not self._is_23_BST(h):
 			raise self.NodeError("Not in symmetric order or not a 2-3 tree")
@@ -102,7 +102,7 @@ class NodeChecker:
 class TestBinarySearchTree(NodeChecker, _TestCase):
 
 	def setUp(self):
-		self.cls = orderedtable.BinarySearchTree
+		self.cls = sortedtable.BinarySearchTree
 		self.data = tuple(chr(i + 0x20) for i in range(95))
 
 	def test_clear(self):
@@ -363,7 +363,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 class TestSortedMapping(NodeChecker, _TestCase):
 
 	def setUp(self):
-		self.cls = orderedtable.SortedMapping
+		self.cls = sortedtable.SortedMapping
 		self.data = [(i, chr(i)) for i in range(2 * _getrecursionlimit())]
 
 	def assert_contents(self, m, contents):
@@ -472,7 +472,7 @@ class TestSortedMapping(NodeChecker, _TestCase):
 class TestSortedSet(NodeChecker, _TestCase):
 
 	def setUp(self):
-		self.cls = orderedtable.SortedSet
+		self.cls = sortedtable.SortedSet
 		self.data = list(range(2 * _getrecursionlimit()))
 
 	def assert_contents(self, s, contents):
