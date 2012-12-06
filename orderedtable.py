@@ -2,11 +2,12 @@
 
 You may use `OrderedMapping` or `OrderdSet` directly for keys or elements
 (respectively) that are totally ordered but not necessarily hashable. These
-data types support the mapping and set interfaces respectively. They do not
-(currently) support deletion, but they do support insertion.
+data types support the mapping and set interfaces respectively. Immutable
+versions are provided too in `OrderedFrozenSet` and `FrozenOrderedMapping`.
 
 You may create your own ordered symbol table client interface by subclassing the
-`BinarySearchTree` class.
+`BinarySearchTree` class and providing public methods that access its public
+`get` and private `_set_` and `_delete` methods.
 
 The tests for this code have been run successfully on Python 3.3 and 3.2.
 """
@@ -433,7 +434,14 @@ class _Node:
 
 class BinarySearchTree:
 
-	"Abstract binary search tree. Subclass this class to add a client interface."
+	"""Abstract binary search tree. Subclass to add a client interface.
+
+	This class is not meant to be instantiated directly. It provides a basic
+	`__init__` method that should be called by subclasses as well as a `get`
+	method. However, it hides the mutators in private methods `_set` and
+	`_delete`. This is useful for creating immutable subclass, but it means that
+	you can't really use this class as a container without subclassing it.
+	"""
 
 	def __init__(self):
 		"""Instantiate new empty BST."""
