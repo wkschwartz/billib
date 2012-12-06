@@ -3,7 +3,7 @@
 You may use `OrderedMapping` or `OrderdSet` directly for keys or elements
 (respectively) that are totally ordered but not necessarily hashable. These
 data types support the mapping and set interfaces respectively. Immutable
-versions are provided too in `OrderedFrozenSet` and `FrozenOrderedMapping`.
+versions are provided too in `OrderedFrozenSet` and `OrderedFrozenMapping`.
 
 You may create your own ordered symbol table client interface by subclassing the
 `BinarySearchTree` class and providing public methods that access its public
@@ -534,16 +534,16 @@ class BinarySearchTree:
 		"The number of keys k such that lo <= k < hi."
 		return self._root.width(lo, hi)
 
-class FrozenOrderedMapping(BinarySearchTree, _MappingABC):
+class OrderedFrozenMapping(BinarySearchTree, _MappingABC):
 
 	"Mapping of totally ordered keys, which need not be hashable."
 
 	def __init__(self, iterable=()):
-		"""Instantiate a new FrozenOrderedMapping optionally with key-value pairs.
+		"""Instantiate a new OrderedFrozenMapping optionally with key-value pairs.
 
 		`iterable` is an optional argument that is either a mapping or is an
 		iterable containing two-item iterables: The first item is the key and
-		the second the value. The `FrozenOrderedMapping` will contain these key-value
+		the second the value. The `OrderedFrozenMapping` will contain these key-value
 		pairs. If keys are repeated, later copies replace earlier ones. The keys
 		must be totally ordered but they need not be hashable.
 		"""
@@ -577,9 +577,9 @@ class FrozenOrderedMapping(BinarySearchTree, _MappingABC):
 		return clsname + '({' + ', '.join(items) + '})'
 
 
-class OrderedMapping(FrozenOrderedMapping, _MutableMappingABC):
+class OrderedMapping(OrderedFrozenMapping, _MutableMappingABC):
 
-	"Mutable ordered mapping. Add insertion and deletion to FrozenOrderedMappings."
+	"Mutable ordered mapping. Add insertion and deletion to OrderedFrozenMappings."
 
 	def __delitem__(self, key):
 		"Remove key from the mapping. Raise a KeyError if key is not in the map."
