@@ -1,11 +1,11 @@
-"""Sorted symbol table data types.
+"""Ordered symbol table data types.
 
 You may use `SortedMapping` or `SortedSet` directly for keys or elements
 (respectively) that are totally ordered but not necessarily hashable. These
 data types support the mapping and set interfaces respectively. Immutable
 versions are provided too in `SortedFrozenSet` and `SortedFrozenMapping`.
 
-You may create your own sorted symbol table client interface by subclassing the
+You may create your own ordered symbol table client interface by subclassing the
 `BinarySearchTree` class and providing public methods that access its public
 `get` and private `_set_` and `_delete` methods.
 
@@ -234,7 +234,7 @@ class _Node:
 		self._left = self._left._delmin()
 		return self._fixup()
 
-	#### Sorted symbol table methods ####
+	#### Ordered symbol table methods ####
 
 	def popmin(self):
 		"Pop the (key, value) tuple corresponding with the minimum key."
