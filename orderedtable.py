@@ -35,6 +35,7 @@ class _NullNode:
 	def select(self, k): raise IndexError('Select index %r out of bounds' % k)
 	def height(self): return 0
 	def search(self, key): raise KeyError(key)
+	def delete(self, key): raise KeyError(key)
 	def width(self, lo, hi): return 0
 
 	def insert(self, key, value):
@@ -463,6 +464,10 @@ class BinarySearchTree:
 	def _insert(self, key, value):
 		"Insert the key-value pair, replacing if key already present."
 		self._root = self._root.insert(key, value)
+
+	def _delete(self, key):
+		"Remove key from the mapping. Raise a KeyError if key is not in the map."
+		self._root.delete(key)
 
 	def min(self):
 		"Return the least key."
