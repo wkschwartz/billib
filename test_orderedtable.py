@@ -133,7 +133,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 			self.assertNode(pickled)
 			self.assertEqual(len(pickled), i + 1)
 			for j in range(i):
-				self.assertEqual(chr(j), pickled._search(j))
+				self.assertEqual(chr(j), pickled.get(j))
 
 	def test_int_keys_in_order(self):
 		for i in range(len(self.data)):
@@ -181,27 +181,27 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 				self.assertLess(t._root.height(), 2.0 * _log(j + 1, 2))
 			else:
 				self.assertEqual(t._root.height(), j + 1)
-			self.assertEqual(data[j], t._search(j))
+			self.assertEqual(data[j], t.get(j))
 			self.assertIn(j, t)
 		self.assertEqual(i, len(t))
 		self.assertEqual(list(range(len(data))), list(t))
-		self.assertRaises(KeyError, t._search, i + 1)
+		self.assertIsNone(t.get(i + 1))
 
 	def test_insert_replaces(self):
 		t = self.cls()
 		self.assertNode(t)
 		t._insert(1, 'a')
 		self.assertNode(t)
-		self.assertEqual('a', t._search(1))
+		self.assertEqual('a', t.get(1))
 		t._insert(1, 'b')
 		self.assertNode(t)
-		self.assertEqual('b', t._search(1))
+		self.assertEqual('b', t.get(1))
 
 	def test_only_ordered_keys(self):
 		t = self.cls()
 		self.assertNode(t)
 		for k in None, object(), type, {}:
-			self.assertRaises(TypeError, t._search, k, 'a')
+			self.assertRaises(TypeError, t.get, k, 'a')
 			self.assertRaises(TypeError, t._insert, k, 'a')
 
 	def test_disjoint_keys(self):
@@ -209,8 +209,8 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		self.assertNode(t)
 		t._insert({1}, 'a')
 		self.assertNode(t)
-		self.assertRaises(KeyError, t._search, set())
-		self.assertRaises(TypeError, t._search, {2})
+		self.assertIsNone(t.get(set()))
+		self.assertRaises(TypeError, t.get, {2})
 		self.assertRaises(TypeError, t._insert, {2})
 
 	def test_unhashable_keys(self):
@@ -219,7 +219,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		for k in [], [1], [2]:
 			t._insert(k, 'a')
 			self.assertNode(t)
-			self.assertEqual(t._search(k), 'a')
+			self.assertEqual(t.get(k), 'a')
 
 	def test_min_max(self):
 		t = self.cls()
@@ -459,7 +459,7 @@ class TestOrderedSet(NodeChecker, _TestCase):
 		self.assertEqual(len(contents), len(s))
 		for i in contents:
 			self.assertIn(i, s)
-			self.assertEqual(i, s.search(i))
+			self.assertEqual(i, s.get(i))
 		count = 0
 		for i in s:
 			self.assertIn(i, contents)
@@ -479,7 +479,7 @@ class TestOrderedSet(NodeChecker, _TestCase):
 			self.assertNode(pickled)
 			self.assertEqual(len(pickled), i + 1)
 			for j in range(i):
-				self.assertEqual(j, pickled.search(j))
+				self.assertEqual(j, pickled.get(j))
 
 	def test_create_empty_and_add(self):
 		s = self.cls()

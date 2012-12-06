@@ -37,7 +37,7 @@ class _NullNode:
 	def index(self, key, start=None, stop=None): raise KeyError(key)
 	def select(self, k): raise IndexError('Select index %r out of bounds' % k)
 	def height(self): return 0
-	def search(self, key): raise KeyError(key)
+	def get(self, key): raise KeyError(key)
 	def delete(self, key): raise KeyError(key)
 	def width(self, lo, hi): return 0
 
@@ -134,7 +134,7 @@ class _Node:
 
 	def __contains__(self, key):
 		try:
-			self.search(key)
+			self.get(key)
 		except KeyError:
 			return False
 		return True
@@ -144,7 +144,7 @@ class _Node:
 		r = 0 if self._right is None else self._right.height()
 		return 1 + max(l, r)
 
-	def search(self, key):
+	def get(self, key):
 		"Return value associated with `key`; Raise `KeyError` if key not found."
 		x = self
 		while x is not None:
@@ -185,7 +185,7 @@ class _Node:
 
 	def delete(self, key):
 		"Delete the corresponding with key."
-		self.search(key) # Raise a KeyError if key not in self.
+		self.get(key) # Raise a KeyError if key not in self.
 		self = self._delete(key)
 		self._color = self._BLACK
 		return self
@@ -207,7 +207,7 @@ class _Node:
 				self = self._move_red_right()
 			if key == self._key:
 				rightmin = self._right.min()
-				self._value = self._right.search(rightmin)
+				self._value = self._right.get(rightmin)
 				self._key = rightmin
 				self._right = self._right._delmin()
 			else:
@@ -460,10 +460,6 @@ class BinarySearchTree:
 		"""
 		return self._root.__reversed__(lo=lo, hi=hi)
 
-	def _search(self, key):
-		"Return value associated with `key`; Raise `KeyError` if key not found."
-		return self._root.search(key)
-
 	def _insert(self, key, value):
 		"Insert the key-value pair, replacing if key already present."
 		self._root = self._root.insert(key, value)
@@ -471,6 +467,13 @@ class BinarySearchTree:
 	def _delete(self, key):
 		"Remove key from the mapping. Raise a KeyError if key is not in the map."
 		self._root.delete(key)
+
+	def get(self, key, default=None):
+		"Return value of key; Return default or raise KeyError if key not found."
+		try:
+			return self._root.get(key)
+		except KeyError:
+			return default
 
 	def min(self):
 		"Return the least key."
@@ -551,7 +554,9 @@ class FrozenOrderedMapping(BinarySearchTree, _MappingABC):
 								' or iterables of pairs.'.format(type(self)))
 			self[k] = v
 
-	def __getitem__(self, key): return self._search(key)
+	def __getitem__(self, key):
+		"Return the value of the key. Raise KeyError if not in self."
+		return self._root.get(key)
 
 	def __repr__(self):
 		"Return dict-like string representation."
@@ -599,10 +604,6 @@ class OrderedFrozenSet(BinarySearchTree, _SetABC):
 		super().__init__()
 		for element in iterable:
 			self._insert(element, element)
-
-	def search(self, item):
-		"If there is an equal item in self, return it. Else raise KeyError."
-		return self._search(item)
 
 	def __repr__(self):
 		"Return set-like string representation."
