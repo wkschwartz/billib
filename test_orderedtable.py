@@ -453,6 +453,19 @@ class TestOrderedMapping(NodeChecker, _TestCase):
 		self.assertRaises(TypeError, m.update, [1, 2, 3])
 		self.assertRaises(TypeError, m.__setitem__, [1, 2, 3])
 
+	def test_get_getitem(self):
+		"Test that get and __getitem__ treat missing keys differently."
+		m = self.cls()
+		# Test NullNode first, then regular Node.
+		self.assertIsNone(m.get(1))
+		with self.assertRaises(KeyError): m[1]
+		m[1] = 'a'
+		self.assertNode(m)
+		self.assertEqual(m.get(1), 'a')
+		self.assertEqual(m[1], 'a')
+		self.assertIsNone(m.get(2))
+		with self.assertRaises(KeyError): m[2]
+		
 
 class TestOrderedSet(NodeChecker, _TestCase):
 
