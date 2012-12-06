@@ -192,7 +192,10 @@ class _Node:
 		"Delete the corresponding with key."
 		self.get(key) # Raise a KeyError if key not in self.
 		self = self._delete(key)
-		self._color = self._BLACK
+		if self is None:
+			self = _NullNode()
+		else:
+			self._color = self._BLACK
 		return self
 
 	def _delete(self, key):
@@ -222,7 +225,10 @@ class _Node:
 	def delmin(self):
 		"Delete the key-value pair associated with the minimum key."
 		self = self._delmin()
-		self._color = self._BLACK
+		if self is None:
+			self = _NullNode()
+		else:
+			self._color = self._BLACK
 		return self
 
 	def _delmin(self):
