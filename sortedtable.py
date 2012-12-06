@@ -597,6 +597,10 @@ class SortedMapping(SortedFrozenMapping, _MutableMappingABC):
 		"Remove every element from the tree in constant time."
 		self.__init__()
 
+	def popitem(self):
+		"Pop (key, value) pair with smallest key. Raise KeyError if empty."
+		return self.popmin()
+
 	def __setitem__(self, key, value):
 		self._set(key, value)
 
@@ -649,6 +653,8 @@ class SortedSet(SortedFrozenSet, _MutableSetABC):
 	def popmin(self):
 		"Remove and return smallest element. Raise KeyError if set empty."
 		return super().popmin()[0]
+
+	pop = popmin
 
 	def popmax(self):
 		"Remove and return largest element. Raise KeyError if set empty."
