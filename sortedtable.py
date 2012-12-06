@@ -46,6 +46,8 @@ class _NullNode:
 		key < key
 		raise KeyError(key)
 
+	delete = delmin = get
+
 	def set(self, key, value):
 		n = _Node(key, value)
 		n._color = _Node._BLACK
