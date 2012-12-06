@@ -645,3 +645,11 @@ class SortedSet(SortedFrozenSet, _MutableSetABC):
 			self._delete(value)
 		except KeyError:
 			pass
+
+	def popmin(self):
+		"Remove and return smallest element. Raise KeyError if set empty."
+		return super().popmin()[0]
+
+	def popmax(self):
+		"Remove and return largest element. Raise KeyError if set empty."
+		return super().popmax()[0]
