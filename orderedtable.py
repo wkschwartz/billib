@@ -14,7 +14,8 @@ The tests for this code have been run successfully on Python 3.3 and 3.2.
 
 from collections import (Mapping as _MappingABC,
 						 MutableMapping as _MutableMappingABC,
-						 Set as _SetABC,)
+						 Set as _SetABC,
+						 MutableSet as _MutableSetABC)
 
 
 class _NullNode:
@@ -582,7 +583,8 @@ class OrderedMapping(FrozenOrderedMapping, _MutableMappingABC):
 		"""
 		self._update(iterable)
 
-class OrderedSet(BinarySearchTree, _SetABC):
+
+class OrderedFrozenSet(BinarySearchTree, _SetABC):
 
 	"Set of totally ordered values, which need not be hashable."
 
@@ -590,22 +592,13 @@ class OrderedSet(BinarySearchTree, _SetABC):
 		"""Instantiate a new OrderedSet, optionally with values.
 
 		`iterable` is an optional argument containing an iterable of values to
-		fill up the new `OrderedSet`. If values are repeated (in terms of
+		fill up the new `OrderedFrozenSet`. If values are repeated (in terms of
 		equality but not identity), later values replace earlier ones. The
 		values must be totally ordered but they need not be hashable.
 		"""
 		super().__init__()
-		self |= iterable
-
-	def add(self, item):
-		"Add an item to the set, replacing older items that are equal."
-		self._insert(item, item)
-
-	def __ior__(self, other):
-		"Update self with new and replacement values from other (in-place union)."
-		for value in other:
-			self.add(value)
-		return self
+		for element in iterable:
+			self._insert(element, element)
 
 	def search(self, item):
 		"If there is an equal item in self, return it. Else raise KeyError."
@@ -616,3 +609,18 @@ class OrderedSet(BinarySearchTree, _SetABC):
 		clsname = self.__class__.__name__
 		return clsname + '({' + ', '.join(map(repr, self)) + '})'
 
+
+class OrderedSet(OrderedFrozenSet, _MutableSetABC):
+
+	"Mutable ordered set. Add insertion and deletion to OrderedFrozenSet."
+
+	def add(self, item):
+		"Add an item to the set, replacing older items that are equal."
+		self._insert(item, item)
+
+	def discard(self, value):
+		"Remove an element.  Do not raise an exception if absent."
+		try:
+			self._delete(value)
+		except KeyError:
+			pass
