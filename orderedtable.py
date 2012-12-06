@@ -45,7 +45,7 @@ class _NullNode:
 		key < key
 		raise KeyError(key)
 
-	def insert(self, key, value):
+	def set(self, key, value):
 		n = _Node(key, value)
 		n._color = _Node._BLACK
 		return n
@@ -58,7 +58,7 @@ class _Node:
 	You usually will not need this class directly. Instead, subclass the
 	`BinarySearchTree` class below. However, subclassing the present class may
 	be useful for adding functionality with recursive algorithms. In that case,
-	also subclass `_NullNode` to replace its `insert` method and sublcass
+	also subclass `_NullNode` to replace its `set` method and sublcass
 	`BinarySearchTree` to repalce its `__init__` method.
 
 	Arbitrary attribute assignment is not allowed because every insertion would
@@ -163,25 +163,25 @@ class _Node:
 								"type {.__name__!r}".format(type(self), type(key)))
 		raise KeyError(key)
 
-	def insert(self, key, value):
-		"Recursively insert the key-value pair in the subtree rooted at `self`."
-		self = self._insert(key, value)
+	def set(self, key, value):
+		"Recursively set the key-value pair in the subtree rooted at `self`."
+		self = self._set(key, value)
 		self._color = self._BLACK
 		return self
 
-	def _insert(self, key, value):
+	def _set(self, key, value):
 		if key == self._key:
 			self._value = value
 		elif key < self._key:
 			if self._left is None:
 				self._left = self.__class__(key, value)
 			else:
-				self._left = self._left._insert(key, value)
+				self._left = self._left._set(key, value)
 		elif key > self._key:
 			if self._right is None:
 				self._right = self.__class__(key, value)
 			else:
-				self._right = self._right._insert(key, value)
+				self._right = self._right._set(key, value)
 		else:
 			raise TypeError("{.__name__!r} can't contain unorderable keys of "
 							"type {.__name__!r}".format(type(self), type(key)))
@@ -464,9 +464,9 @@ class BinarySearchTree:
 		"""
 		return self._root.__reversed__(lo=lo, hi=hi)
 
-	def _insert(self, key, value):
-		"Insert the key-value pair, replacing if key already present."
-		self._root = self._root.insert(key, value)
+	def _set(self, key, value):
+		"Set the key-value pair, replacing if key already present."
+		self._root = self._root.set(key, value)
 
 	def _delete(self, key):
 		"Remove key from the mapping. Raise a KeyError if key is not in the map."
@@ -582,7 +582,7 @@ class OrderedMapping(FrozenOrderedMapping, _MutableMappingABC):
 		self.__init__()
 
 	def __setitem__(self, key, value):
-		self._insert(key, value)
+		self._set(key, value)
 
 	def update(self, iterable=()):
 		"""Update self with new or replacement values from `iterable`.
@@ -607,7 +607,7 @@ class OrderedFrozenSet(BinarySearchTree, _SetABC):
 		"""
 		super().__init__()
 		for element in iterable:
-			self._insert(element, element)
+			self._set(element, element)
 
 	def __repr__(self):
 		"Return set-like string representation."
@@ -621,7 +621,7 @@ class OrderedSet(OrderedFrozenSet, _MutableSetABC):
 
 	def add(self, item):
 		"Add an item to the set, replacing older items that are equal."
-		self._insert(item, item)
+		self._set(item, item)
 
 	def discard(self, value):
 		"Remove an element.  Do not raise an exception if absent."
