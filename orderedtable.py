@@ -12,7 +12,9 @@ The tests for this code have been run successfully on Python 3.3 and 3.2.
 """
 
 
-from collections import Mapping as _MappingABC, Set as _SetABC
+from collections import (Mapping as _MappingABC,
+						 MutableMapping as _MutableMappingABC,
+						 Set as _SetABC,)
 
 
 class _NullNode:
@@ -516,27 +518,27 @@ class BinarySearchTree:
 		"The number of keys k such that lo <= k < hi."
 		return self._root.width(lo, hi)
 
-class OrderedMapping(BinarySearchTree, _MappingABC):
+class FrozenOrderedMapping(BinarySearchTree, _MappingABC):
 
 	"Mapping of totally ordered keys, which need not be hashable."
 
 	def __init__(self, iterable=()):
-		"""Instantiate a new OrderedMapping optionally with key-value pairs.
-
-		The optional argument `iterable` has the same semantics as it does for
-		the `update` method.
-		"""
-		super().__init__()
-		self.update(iterable)
-
-	def update(self, iterable=()):
-		"""Update self with new or replacement values from `iterable`.
+		"""Instantiate a new FrozenOrderedMapping optionally with key-value pairs.
 
 		`iterable` is an optional argument that is either a mapping or is an
 		iterable containing two-item iterables: The first item is the key and
-		the second the value. The `OrderedMapping` will contain these key-value
+		the second the value. The `FrozenOrderedMapping` will contain these key-value
 		pairs. If keys are repeated, later copies replace earlier ones. The keys
 		must be totally ordered but they need not be hashable.
+		"""
+		super().__init__()
+		self._update(iterable)
+
+	def _update(self, iterable):
+		"""Update self with new or replacement values from `iterable`.
+
+		The optional argument `iterable` has the same semantics as it does for
+		the `__init__` method.
 		"""
 		if isinstance(iterable, _MappingABC):
 			iterable = iterable.items()
@@ -550,15 +552,35 @@ class OrderedMapping(BinarySearchTree, _MappingABC):
 
 	def __getitem__(self, key): return self._search(key)
 
-	def __setitem__(self, key, value):
-		self._insert(key, value)
-
 	def __repr__(self):
 		"Return dict-like string representation."
 		clsname = self.__class__.__name__
 		items = (': '.join([repr(k), repr(v)]) for k, v in self.items())
 		return clsname + '({' + ', '.join(items) + '})'
 
+
+class OrderedMapping(FrozenOrderedMapping, _MutableMappingABC):
+
+	"Mutable ordered mapping. Add insertion and deletion to FrozenOrderedMappings."
+
+	def __delitem__(self, key):
+		"Remove key from the mapping. Raise a KeyError if key is not in the map."
+		self._delete(key)
+
+	def clear(self):
+		"Remove every element from the tree in constant time."
+		self.__init__()
+
+	def __setitem__(self, key, value):
+		self._insert(key, value)
+
+	def update(self, iterable=()):
+		"""Update self with new or replacement values from `iterable`.
+
+		The optional argument `iterable` has the same semantics as it does for
+		the `__init__` method.
+		"""
+		self._update(iterable)
 
 class OrderedSet(BinarySearchTree, _SetABC):
 
