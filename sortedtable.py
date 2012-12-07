@@ -572,7 +572,7 @@ class SortedFrozenMapping(BinarySearchTree, _MappingABC):
 			except TypeError:
 				raise TypeError('{.__name__!r} must be initialized with mappings'
 								' or iterables of pairs.'.format(type(self)))
-			self[k] = v
+			self._set(k, v)
 
 	def __getitem__(self, key):
 		"Return the value of the key. Raise KeyError if not in self."
