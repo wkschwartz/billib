@@ -26,27 +26,24 @@ class _NullNode:
 	__slots__ = ()
 
 	def __str__(self): return self.__class__.__name__ + "()"
-	def __len__(self): return 0
 	def __iter__(self, *, lo=None, hi=None): return iter([])
 	def __reversed__(self, *, lo=None, hi=None): return iter([])
 	def __contains__(self, key): return False
 	def min(self): raise ValueError('No min of an empty container.')
 	def max(self): raise ValueError('No max of an empty container.')
-	def floor(self, key): raise KeyError(key)
-	def ceiling(self, key): raise KeyError(key)
-	def rank(self, key): return 0
-	def index(self, key, start=None, stop=None): raise KeyError(key)
 	def select(self, k): raise IndexError('Select index %r out of bounds' % k)
-	def height(self): return 0
-	def delete(self, key): raise KeyError(key)
+	def index(self, key, start=None, stop=None): raise KeyError(key)
+	def rank(self, key): return 0
 	def width(self, lo, hi): return 0
+	def __len__(self): return 0
+	height = __len__
 
 	def get(self, key):
 		"Raise TypeError for unorderable keys if possoble, otherwise KeyError."
 		key < key
 		raise KeyError(key)
 
-	delete = delmin = get
+	delete = delmin = floor = ceiling = get
 
 	def set(self, key, value):
 		n = _Node(key, value)
