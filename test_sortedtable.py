@@ -20,7 +20,7 @@ class NodeChecker:
 		"Check integrity of red-black BST data structure."
 		if isinstance(h, sortedtable.BinarySearchTree):
 			h = h._root
-		if isinstance(h, sortedtable._NullNode):
+		if h is None:
 			return True
 		if not self._is_23_BST(h):
 			raise self.NodeError("Not in symmetric order or not a 2-3 tree")
@@ -171,7 +171,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 	def _int_keys(self, data):
 		t = self.cls()
 		self.assertNode(t)
-		self.assertEqual(t._root.height(), 0)
+		self.assertIsNone(t._root)
 		i = len(data)
 		for j in range(i):
 			self.assertEqual(j, len(t))
@@ -202,7 +202,6 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 	def test_only_ordered_keys(self):
 		t = self.cls()
 		self.assertNode(t)
-		# Test a NullNode then set and test a regular one.
 		for k in None, object(), type, {}:
 			self.assertRaises(TypeError, t.get, k, 'a')
 			self.assertRaises(TypeError, t._set, k, 'a')
@@ -458,7 +457,6 @@ class TestSortedMapping(NodeChecker, _TestCase):
 	def test_get_getitem(self):
 		"Test that get and __getitem__ treat missing keys differently."
 		m = self.cls()
-		# Test NullNode first, then regular Node.
 		self.assertIsNone(m.get(1))
 		with self.assertRaises(KeyError): m[1]
 		m[1] = 'a'

@@ -19,38 +19,6 @@ from collections import (Mapping as _MappingABC,
 						 MutableSet as _MutableSetABC)
 
 
-class _NullNode:
-
-	"Drop-in dummy `_Node`"
-
-	__slots__ = ()
-
-	def __str__(self): return self.__class__.__name__ + "()"
-	def __iter__(self, *, lo=None, hi=None): return iter([])
-	def __reversed__(self, *, lo=None, hi=None): return iter([])
-	def __contains__(self, key): return False
-	def min(self): raise ValueError('No min of an empty container.')
-	def max(self): raise ValueError('No max of an empty container.')
-	def select(self, k): raise IndexError('Select index %r out of bounds' % k)
-	def index(self, key, start=None, stop=None): raise KeyError(key)
-	def rank(self, key): return 0
-	def width(self, lo, hi): return 0
-	def __len__(self): return 0
-	height = __len__
-
-	def get(self, key):
-		"Raise TypeError for unorderable keys if possoble, otherwise KeyError."
-		key < key
-		raise KeyError(key)
-
-	delete = delmin = floor = ceiling = get
-
-	def set(self, key, value):
-		n = _Node(key, value)
-		n._color = _Node._BLACK
-		return n
-
-
 class _Node:
 
 	"""A left-leaning red-black BST. This is the 2-3 version.
@@ -58,8 +26,7 @@ class _Node:
 	You usually will not need this class directly. Instead, subclass the
 	`BinarySearchTree` class below. However, subclassing the present class may
 	be useful for adding functionality with recursive algorithms. In that case,
-	also subclass `_NullNode` to replace its `set` method and sublcass
-	`BinarySearchTree` to repalce its `__init__` method.
+	also sublcass `BinarySearchTree` to repalce its `_set` method.
 
 	Arbitrary attribute assignment is not allowed because every insertion would
 	cause the client to lose direct access to the node he assigned the attribute
@@ -191,9 +158,7 @@ class _Node:
 		"Delete the corresponding with key."
 		self.get(key) # Raise a KeyError if key not in self.
 		self = self._delete(key)
-		if self is None:
-			self = _NullNode()
-		else:
+		if self is not None:
 			self._color = self._BLACK
 		return self
 
@@ -224,9 +189,7 @@ class _Node:
 	def delmin(self):
 		"Delete the key-value pair associated with the minimum key."
 		self = self._delmin()
-		if self is None:
-			self = _NullNode()
-		else:
+		if self is not None:
 			self._color = self._BLACK
 		return self
 
@@ -436,14 +399,23 @@ class BinarySearchTree:
 
 	def __init__(self):
 		"""Instantiate new empty BST."""
-		self._root = _NullNode()
+		self._root = None
 
 	def clear(self):
 		"Remove every element from the tree in constant time."
 		self.__init__()
 
-	def __len__(self): return len(self._root)
-	def __contains__(self, key): return key in self._root
+	def __len__(self):
+		"Return number of keys present."
+		if self._root is None:
+			return 0
+		return len(self._root)
+
+	def __contains__(self, key):
+		"Return whether a given key is present."
+		if self._root is None:
+			return False
+		return key in self._root
 
 	def __iter__(self, *, lo=None, hi=None):
 		"""Iterate through the keys in order.
@@ -452,6 +424,8 @@ class BinarySearchTree:
 		keys k such that lo <= k < hi. (The assymetry between the conditionals
 		is meant to parallel the semantics of builtins slice() and range().)
 		"""
+		if self._root is None:
+			return iter([])
 		return self._root.__iter__(lo=lo, hi=hi)
 
 	def __reversed__(self, *, lo=None, hi=None):
@@ -461,18 +435,28 @@ class BinarySearchTree:
 		keys k such that lo <= k < hi. (The assymetry between the conditionals
 		is meant to parallel the semantics of builtins slice() and range().)
 		"""
+		if self._root is None:
+			return iter([])
 		return self._root.__reversed__(lo=lo, hi=hi)
 
 	def _set(self, key, value):
 		"Set the key-value pair, replacing if key already present."
-		self._root = self._root.set(key, value)
+		if self._root is None:
+			self._root = _Node(key, value)
+			self._root._color = _Node._BLACK
+		else:
+			self._root = self._root.set(key, value)
 
 	def _delete(self, key):
 		"Remove key from the mapping. Raise a KeyError if key is not in the map."
+		if self._root is None:
+			raise KeyError(key)
 		self._root.delete(key)
 
 	def get(self, key, default=None):
 		"Return value of key; Return default or raise KeyError if key not found."
+		if self._root is None:
+			return default
 		try:
 			return self._root.get(key)
 		except KeyError:
@@ -480,6 +464,8 @@ class BinarySearchTree:
 
 	def popmin(self):
 		"Pop the (key, value) tuple corresponding with the minimum key."
+		if self._root is None:
+			raise KeyError('Empty %s object' % self.__class__.__name__)
 		key = self.min()
 		value = self[key]
 		self._root = self._root.delmin()
@@ -487,6 +473,8 @@ class BinarySearchTree:
 
 	def popmax(self):
 		"Pop the (key, value) tuple corresponding with the maximum key."
+		if self._root is None:
+			raise KeyError('Empty %s object' % self.__class__.__name__)
 		key = self.max()
 		value = self[key]
 		self._root = self._root.delete(key)
@@ -494,30 +482,44 @@ class BinarySearchTree:
 
 	def min(self):
 		"Return the least key."
+		if self._root is None:
+			raise ValueError('No min of an empty container.')
 		return self._root.min()
 
 	def max(self):
 		"Return the greatest key."
+		if self._root is None:
+			raise ValueError('No max of an empty container.')
 		return self._root.max()
 
 	def floor(self, key):
 		"Return the greatest key <= the given key. Raise a KeyError if none present."
+		if self._root is None:
+			raise KeyError(key)
 		return self._root.floor(key)
 
 	def ceiling(self, key):
 		"Return the least key >= the given key. Raise a KeyError if none present."
+		if self._root is None:
+			raise KeyError(key)
 		return self._root.ceiling(key)
 
 	def rank(self, key):
 		"Return number of keys in the tree that are less than the given key."
+		if self._root is None:
+			return 0
 		return self._root.rank(key)
 
 	def select(self, k):
 		"Return the key with rank k. Raise IndexError if k out of bounds."
+		if self._root is None:
+			raise IndexError('Select index %r out of bounds' % k)
 		return self._root.select(k)
 
 	def range(self, *args):
 		"Return iterator over keys with arguments like builtin.range()."
+		if self._root is None:
+			return iter([])
 		s = slice(*args)
 		if s.step is None or s.step == 1:
 			return self._root.__iter__(lo=s.start, hi=s.stop)
@@ -533,10 +535,14 @@ class BinarySearchTree:
 		This is essentially the rank method with the same semantics as
 		`list.index`. if `key` is not present, a `KeyError` is raised.
 		"""
+		if self._root is None:
+			raise KeyError(key)
 		return self._root.index(key, start, stop)
 
 	def width(self, lo, hi):
 		"The number of keys k such that lo <= k < hi."
+		if self._root is None:
+			return 0
 		return self._root.width(lo, hi)
 
 class SortedFrozenMapping(BinarySearchTree, _MappingABC):
@@ -573,6 +579,8 @@ class SortedFrozenMapping(BinarySearchTree, _MappingABC):
 
 	def __getitem__(self, key):
 		"Return the value of the key. Raise KeyError if not in self."
+		if self._root is None:
+			raise KeyError(key)
 		return self._root.get(key)
 
 	def __repr__(self):
