@@ -203,7 +203,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		t = self.cls()
 		self.assertNode(t)
 		for k in None, object(), type, {}:
-			self.assertRaises(TypeError, t.get, k, 'a')
+			self.assertEqual(t.get(k, 'a'), 'a')
 			self.assertRaises(TypeError, t._set, k, 'a')
 		t._set(1, 'b')
 		self.assertNode(t)
