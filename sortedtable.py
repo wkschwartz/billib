@@ -173,7 +173,7 @@ class _Node:
 			if isred(self._left):
 				self = self._rotate_right()
 			if key == self._key and self._right is None:
-				self = self._move_red_right()
+				return None
 			if (not isred(self._right) and self._right is not None and
 					not isred(self._right._left)):
 				self = self._move_red_right()
