@@ -163,6 +163,7 @@ class _Node:
 		return self
 
 	def _delete(self, key):
+		assert key in self
 		isred = self._isred
 		if key < self._key:
 			if (not isred(self._left) and self._left is not None and
@@ -310,6 +311,8 @@ class _Node:
 		If self is red and self._left self._left._left are black, make
 		self._left or one of its children red.
 		"""
+		isred = self._isred
+		assert isred(self) and not isred(self._left) and not isred(self._left._left)
 		self._flip_colors()
 		if self._right is not None and self._isred(self._right._left):
 			self._right = self._right._rotate_right()
@@ -323,6 +326,8 @@ class _Node:
 		If self is red and both self._right and self._right._left are
 		black, make h._right or one of its children red.
 		"""
+		isred = self._isred
+		assert isred(self) and not isred(self._right) and not isred(self._right._left)
 		self._flip_colors()
 		if self._left is not None and self._isred(self._left._left):
 			self = self._rotate_right()

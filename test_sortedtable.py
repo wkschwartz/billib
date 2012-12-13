@@ -188,6 +188,19 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 		self.assertEqual(i, len(t))
 		self.assertEqual(list(range(len(data))), list(t))
 		self.assertIsNone(t.get(i + 1))
+		# Deletion
+		for j in range(i, 0, -1):
+			self.assertEqual(j, len(t))
+			self.assertIn(j, t)
+			t._delete(j)
+			self.assertNode(t)
+			if j > 1:
+				self.assertLess(t._root.height(), 2.0 * _log(j, 2))
+			else:
+				self.assertEqual(t._root.height(), j)
+			self.assertNotIn(j, t)
+			self.assertEqual(list(range(j)), list(t))
+		self.assertIsNone(t._root)
 
 	def test_set_replaces(self):
 		t = self.cls()
