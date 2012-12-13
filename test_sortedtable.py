@@ -546,5 +546,19 @@ class TestSortedSet(NodeChecker, _TestCase):
 		self.assertEqual([i for i in range(10)], list(self.cls(data)))
 
 
+try:
+	from test.mapping_tests import BasicTestMappingProtocol
+except ImportError:
+	from warnings import warn
+	class DeprecatedImportWarning(ImportWarning, DeprecationWarning): pass
+	warn("Coud not import test.mapping_tests. Using Python's internal tests is "
+		 "discouraged anyway.", DeprecatedImportWarning)
+	del warn, DeprecatedImportWarning
+else:
+	class GeneralMappingTests(BasicTestMappingProtocol):
+		type2test = sortedtable.SortedMapping
+	del BasicTestMappingProtocol
+
+
 if __name__ == '__main__':
 	main()
