@@ -456,7 +456,7 @@ class BinarySearchTree:
 		"Remove key from the mapping. Raise a KeyError if key is not in the map."
 		if self._root is None:
 			raise KeyError(key)
-		self._root.delete(key)
+		self._root = self._root.delete(key)
 
 	def get(self, key, default=None):
 		"Return value of key; Return default or raise KeyError if key not found."
