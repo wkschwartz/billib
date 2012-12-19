@@ -472,7 +472,7 @@ class BinarySearchTree:
 		if self._root is None:
 			raise KeyError('Empty %s object' % self.__class__.__name__)
 		key = self.min()
-		value = self[key]
+		value = self.get(key)
 		self._root = self._root.delmin()
 		return (key, value)
 
@@ -481,7 +481,7 @@ class BinarySearchTree:
 		if self._root is None:
 			raise KeyError('Empty %s object' % self.__class__.__name__)
 		key = self.max()
-		value = self[key]
+		value = self.get(key)
 		self._root = self._root.delete(key)
 		return (key, value)
 
