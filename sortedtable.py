@@ -62,9 +62,9 @@ class _Node:
 
 	def _str(self):
 		"Helper for __str__."
-		l = '' if self._left is None else ' ' + self._left._str()
-		r = '' if self._right is None else ' ' + self._right._str()
-		return '(' + str(self._key) + l + r + ')'
+		l = '()' if self._left is None else self._left._str()
+		r = '()' if self._right is None else  self._right._str()
+		return '(' + ' '.join(map(str, [self._key, l, r])) + ')'
 
 	def __len__(self):
 		return self._N
