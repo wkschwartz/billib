@@ -573,14 +573,14 @@ class SortedFrozenMapping(BinarySearchTree, _MappingABC):
 		the `__init__` method.
 		"""
 		if isinstance(iterable, _MappingABC):
-			iterable = iterable.items()
-		for item in iterable:
-			try:
-				k, v = item
-			except TypeError:
-				raise TypeError('{.__name__!r} must be initialized with mappings'
-								' or iterables of pairs.'.format(type(self)))
-			self._set(k, v)
+			for key in iterable:
+				self._set(key, iterable[key])
+		elif hasattr(iterable, "keys"):
+			for key in iterable.keys():
+				self._set(key, iterable[key])
+		else:
+			for key, value in iterable:
+				self._set(key, value)
 
 	def __getitem__(self, key):
 		"Return the value of the key. Raise KeyError if not in self."
