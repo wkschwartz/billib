@@ -27,6 +27,13 @@ These are Stata ado programs.
 	Create a local macro that contains a list of files in folder, recursively
 	through subdirectories.
 
+### Miscellany
+
+* .emacs
+
+	My Emacs configuration file. I'm like to indent with tab
+	characters. I'm sorry that I'm not sorry.
+
 License
 -------
 
