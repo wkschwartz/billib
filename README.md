@@ -31,7 +31,7 @@ These are Stata ado programs.
 
 * .emacs
 
-	My Emacs configuration file. I'm like to indent with tab
+	My Emacs configuration file. I like to indent with tab
 	characters. I'm sorry that I'm not sorry.
 
 License
