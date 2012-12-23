@@ -1,0 +1,30 @@
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes (quote (misterioso)))
+ '(initial-buffer-choice t))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+;; python-mode hooks
+(add-hook 'python-mode-hook 'auto-fill-mode)
+(add-hook 'python-mode-hook 'column-number-mode)
+(add-hook 'python-mode-hook 'linum-mode)
+(add-hook 'python-mode-hook
+	  (lambda ()
+	    (setq fill-collumn 79)
+	    (setq indent-tabs-mode t)
+	    (setq tab-width 4)
+	    (setq python-indent 4)
+	    (setq show-trailing-whitespace t)))
+
+;; yaml-mode stuff. See https://github.com/yoshiki/yaml-mode
+(when (require 'yaml-mode nil :noerror)
+  (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+  (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode)))
