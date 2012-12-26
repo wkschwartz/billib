@@ -4,6 +4,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (misterioso)))
+ '(uniquify-buffer-name-style (quote forward) nil (uniquify))
+ '(python-remove-cwd-from-path nil)
+ '(show-paren-mode t)
  '(initial-buffer-choice t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
