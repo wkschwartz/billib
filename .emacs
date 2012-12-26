@@ -21,7 +21,7 @@
 (add-hook 'python-mode-hook 'linum-mode)
 (add-hook 'python-mode-hook
 	  (lambda ()
-	    (setq fill-collumn 79)
+	    (setq fill-column 79)
 	    (setq indent-tabs-mode t)
 	    (setq tab-width 4)
 	    (setq python-indent 4)
