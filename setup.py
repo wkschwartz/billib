@@ -13,7 +13,7 @@ from sortedtable import __doc__ as LONGDESC, __version__
 
 if __name__ == '__main__':
 	setup(
-		name='exposure',
+		name='sortedtable',
 		version=__version__,
 		description='Ordered symbol table data types.',
 		long_description=LONGDESC,
