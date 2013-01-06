@@ -12,6 +12,7 @@ You may create your own ordered symbol table client interface by subclassing the
 The tests for this code have been run successfully on Python 3.3 and 3.2.
 """
 
+__version__ = '0.0.2.dev1'
 
 from collections import (Mapping as _MappingABC,
 						 MutableMapping as _MutableMappingABC,
