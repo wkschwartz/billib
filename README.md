@@ -18,6 +18,12 @@ Contents
 	Automatically create a Git repository from a folder fiasco like
 	"thing v1.txt", "thing v2.txt", etc.
 
+### Libraries
+
+* orderedtable.py
+
+	Ordered symbol table data types with mapping and set interfaces.
+
 ### Ado
 
 These are Stata ado programs.
