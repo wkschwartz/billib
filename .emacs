@@ -6,8 +6,7 @@
  '(custom-enabled-themes (quote (misterioso)))
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
  '(python-remove-cwd-from-path nil)
- '(show-paren-mode t)
- '(initial-buffer-choice t))
+ '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
