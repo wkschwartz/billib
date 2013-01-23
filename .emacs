@@ -31,3 +31,7 @@
 (when (require 'yaml-mode nil :noerror)
   (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
   (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode)))
+;; go-mode stuff. See http://golang.org/misc/emacs/go-mode.el
+(when (require 'go-mode nil :noerror)
+  (add-to-list 'auto-mode-alist '("\\.go$" . go-mode)))
+
