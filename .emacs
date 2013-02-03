@@ -20,6 +20,8 @@
 (add-hook 'python-mode-hook 'linum-mode)
 (add-hook 'python-mode-hook
 	  (lambda ()
+	    (setq flyspell-issue-message-flag nil)
+	    (flyspell-prog-mode)
 	    (setq fill-column 79)
 	    (setq indent-tabs-mode t)
 	    (setq tab-width 4)
