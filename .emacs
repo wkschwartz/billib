@@ -15,17 +15,17 @@
  )
 
 ;; python-mode hooks
-(add-hook 'python-mode-hook 'auto-fill-mode)
-(add-hook 'python-mode-hook 'column-number-mode)
-(add-hook 'python-mode-hook 'linum-mode)
-(add-hook 'python-mode-hook
+(add-hook 'python-mode-hook (lambda () (setq python-indent 4)))
+
+;; hooks for all programming modes
+(add-hook 'prog-mode-hook 'auto-fill-mode)
+(add-hook 'prog-mode-hook 'column-number-mode)
+(add-hook 'prog-mode-hook 'linum-mode)
+(add-hook 'prog-mode-hook
 	  (lambda ()
-	    (setq flyspell-issue-message-flag nil)
-	    (flyspell-prog-mode)
-	    (setq fill-column 79)
+	    (setq fill-column 80)
 	    (setq indent-tabs-mode t)
 	    (setq tab-width 4)
-	    (setq python-indent 4)
 	    (setq show-trailing-whitespace t)))
 
 ;; yaml-mode stuff. See https://github.com/yoshiki/yaml-mode
