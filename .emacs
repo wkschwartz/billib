@@ -36,3 +36,6 @@
 (when (require 'go-mode nil :noerror)
   (add-to-list 'auto-mode-alist '("\\.go$" . go-mode)))
 
+;; Make Emacs have the recently-opened feature using the F7 key
+(recentf-mode 1) ; keep a list of recently opened files
+(global-set-key (kbd "<f7>") 'recentf-open-files)
