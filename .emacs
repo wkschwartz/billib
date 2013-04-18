@@ -35,6 +35,10 @@
 ;; go-mode stuff. See http://golang.org/misc/emacs/go-mode.el
 (when (require 'go-mode nil :noerror)
   (add-to-list 'auto-mode-alist '("\\.go$" . go-mode)))
+(when (require 'csv-mode nil :noerror)
+  (add-to-list 'auto-mode-alist '("\\.[Cc][Ss][Vv]\\'" . csv-mode))
+  (autoload 'csv-mode "csv-mode"
+	"Major mode for editing comma-separated value files." t))
 
 ;; Make Emacs have the recently-opened feature using the F7 key
 (recentf-mode 1) ; keep a list of recently opened files
