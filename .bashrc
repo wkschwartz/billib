@@ -19,7 +19,7 @@ PS1="\[\033[01;34m\]\w\[\033[00m\] \[\033[01;32m\]$ \[\033[00m\]"
 complete -C aws_completer aws
 
 # If Postgres is installed and we're on Mac OS, then Postgres was probably
-# installed with Homebrew, so I problaby want PGHOME to be what's below.
+# installed with Homebrew, so I problaby want PGDATA to be what's below.
 PGDATA="/usr/local/var/postgres"
 if [[ "$(uname)" == 'Darwin' ]] && [[ -e $PGDATA ]]; then
 	export PGDATA
