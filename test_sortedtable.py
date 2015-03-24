@@ -205,7 +205,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 			t._delete(j)
 			self.assertNode(t)
 			if j > 1:
-				self.assertLess(t._root.height(), 2.0 * _log(j, 2))
+				self.assertLessEqual(t._root.height(), 2.0 * _log(j, 2))
 			elif j == 1:
 				self.assertEqual(t._root.height(), j)
 			else:
