@@ -490,7 +490,7 @@ class TestSortedMapping(NodeChecker, _TestCase):
 		self.assertEqual(m[1], 'a')
 		self.assertIsNone(m.get(2))
 		with self.assertRaises(KeyError): m[2]
-		
+
 
 class TestSortedSet(NodeChecker, _TestCase):
 
