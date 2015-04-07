@@ -549,6 +549,7 @@ class BinarySearchTree:
 			return 0
 		return self._root.width(lo, hi)
 
+
 class SortedFrozenMapping(BinarySearchTree, _MappingABC):
 
 	"Mapping of totally ordered keys, which need not be hashable."
