@@ -1,11 +1,15 @@
 # Add, in order, brew and gem install directories. Pypy install-scripts must be
 # after /usr/local/bin
-export PATH=/usr/local/bin:/usr/local/sbin:/usr/local/opt/ruby/bin:/usr/local/share/pypy:$PATH
-export FINDBUGS_HOME=/usr/local/Cellar/findbugs/2.0.2/libexec
+export PATH=/usr/local/bin:/usr/local/sbin:/usr/local/opt/ruby/bin:/usr/local/share/pypy:/usr/local/opt/go/libexec/bin:/usr/local/share/pypy:$PATH
+export FINDBUGS_HOME=/usr/local/Cellar/findbugs/3.0.1/libexec
+export GOPATH=~/Documents/go
 if [ -f $(brew --prefix)/etc/bash_completion ]; then
 	. $(brew --prefix)/etc/bash_completion
 fi
 alias ls="ls -GFh"
+
+# Sublime Text alias
+alisas subl=/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl
 
 # Without this, every time you switch branches with different sets of files on a
 # Python project and rerun your tests, you'd need to run
