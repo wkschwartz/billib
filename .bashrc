@@ -9,7 +9,7 @@ fi
 alias ls="ls -GFh"
 
 # Sublime Text alias
-alias subl="/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl"
+alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
 
 # Without this, every time you switch branches with different sets of files on a
 # Python project and rerun your tests, you'd need to run
