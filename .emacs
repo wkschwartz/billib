@@ -15,6 +15,9 @@
  ;; If there is more than one, they won't work right.
  )
 
+;; Play nice with Homebrew
+(setq exec-path (append exec-path '("/usr/local/bin")))
+
 ;; set font size to 14pt gloablly
 (set-face-attribute 'default nil :height 140)
 
@@ -59,3 +62,7 @@
       (append '(("\\.html?$" . django-html-mumamo-mode)) auto-mode-alist))
 (setq mumamo-background-colors nil)
 (add-to-list 'auto-mode-alist '("\\.html$" . django-html-mumamo-mode))
+
+;; Homebrew told me to do this.
+(let ((default-directory "/usr/local/share/emacs/site-lisp/"))
+    (normal-top-level-add-subdirs-to-load-path))
