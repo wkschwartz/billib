@@ -1,6 +1,6 @@
 # Add, in order, brew and gem install directories. Pypy install-scripts must be
 # after /usr/local/bin
-export PATH=/usr/local/bin:/usr/local/sbin:/usr/local/opt/ruby/bin:/usr/local/share/pypy:/usr/local/opt/go/libexec/bin:/usr/local/share/pypy:$PATH
+export PATH=/usr/local/bin:/usr/local/sbin:/usr/local/opt/ruby/bin:/usr/local/share/pypy:/usr/local/opt/go/libexec/bin:$PATH
 export FINDBUGS_HOME=/usr/local/Cellar/findbugs/3.0.1/libexec
 export GOPATH=~/Documents/go
 if [ -f $(brew --prefix)/etc/bash_completion ]; then
