@@ -313,7 +313,6 @@ class _Node:
 		self._left or one of its children red.
 		"""
 		isred = self._isred
-		assert isred(self) and not isred(self._left) and not isred(self._left._left)
 		self._flip_colors()
 		if self._right is not None and self._isred(self._right._left):
 			self._right = self._right._rotate_right()
@@ -328,7 +327,6 @@ class _Node:
 		black, make h._right or one of its children red.
 		"""
 		isred = self._isred
-		assert isred(self) and not isred(self._right) and not isred(self._right._left)
 		self._flip_colors()
 		if self._left is not None and self._isred(self._left._left):
 			self = self._rotate_right()
@@ -550,6 +548,7 @@ class BinarySearchTree:
 		if self._root is None:
 			return 0
 		return self._root.width(lo, hi)
+
 
 class SortedFrozenMapping(BinarySearchTree, _MappingABC):
 

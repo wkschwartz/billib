@@ -5,8 +5,16 @@ from pickle import loads as _pickle_loads, dumps as _pickle_dumps
 from random import shuffle as _shuffle
 from sys import getrecursionlimit as _getrecursionlimit
 from math import log as _log
+from os import getenv as _getenv
 
 import sortedtable
+
+
+def slow(test):
+	"Decorator for slow tests -- turned off with the FAST=1 "
+	if _getenv('FAST'):
+		return unittest.skip('Test too slow in FAST mode')(test)
+	return test
 
 
 class NodeChecker:
@@ -135,17 +143,19 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 			for j in range(i):
 				self.assertEqual(chr(j), pickled.get(j))
 
+	@slow
 	def test_int_keys_in_order(self):
 		for i in range(len(self.data)):
 			self._int_keys(self.data[:i])
 
+	@slow
 	def test_int_keys_rand_order(self):
 		for i in range(len(self.data)):
 			data = list(self.data[:i])
 			_shuffle(data)
 			self._int_keys(data)
 
-	@unittest.skip('takes too long')
+	@slow
 	def test_height_after_random_set(self):
 		data = list(range(2 * _getrecursionlimit()))
 		size = len(data)
@@ -157,7 +167,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 			self.assertNode(t)
 		self.assertLessEqual(t._root.height(), 2.0 * _log(size, 2))
 
-	@unittest.skip('takes too long')
+	@slow
 	def test_height_after_ordered_set(self):
 		data = list(range(2 * _getrecursionlimit()))
 		size = len(data)
@@ -195,7 +205,7 @@ class TestBinarySearchTree(NodeChecker, _TestCase):
 			t._delete(j)
 			self.assertNode(t)
 			if j > 1:
-				self.assertLess(t._root.height(), 2.0 * _log(j, 2))
+				self.assertLessEqual(t._root.height(), 2.0 * _log(j, 2))
 			elif j == 1:
 				self.assertEqual(t._root.height(), j)
 			else:
@@ -480,7 +490,7 @@ class TestSortedMapping(NodeChecker, _TestCase):
 		self.assertEqual(m[1], 'a')
 		self.assertIsNone(m.get(2))
 		with self.assertRaises(KeyError): m[2]
-		
+
 
 class TestSortedSet(NodeChecker, _TestCase):
 
