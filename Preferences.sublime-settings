@@ -1,0 +1,110 @@
+{
+	"added_words":
+	[
+		"infeasibility",
+		"gauge",
+		"Ingraham",
+		"Django",
+		"indices",
+		"app",
+		"apps",
+		"nullary"
+	],
+	"auto_complete_commit_on_tab": true,
+	"auto_find_in_selection": true,
+	"binary_file_patterns":
+	[
+		"*.so",
+		"*.jpg",
+		"*.jpeg",
+		"*.png",
+		"*.gif",
+		"*.ttf",
+		"*.tga",
+		"*.dds",
+		"*.ico",
+		"*.eot",
+		"*.pdf",
+		"*.swf",
+		"*.jar",
+		"*.zip",
+		"venv/",
+		".tox/",
+		".mypy_cache/",
+		"build/",
+		".ipynb_checkpoints/"
+	],
+	"bold_folder_labels": true,
+	"color_scheme": "Packages/Solarized Color Scheme/Solarized (dark).sublime-color-scheme",
+	"copy_with_empty_selection": false,
+	"ensure_newline_at_eof_on_save": true,
+	"file_exclude_patterns":
+	[
+		"*.pyc",
+		"*.pyo",
+		"*.exe",
+		"*.dll",
+		"*.obj",
+		"*.o",
+		"*.a",
+		"*.lib",
+		"*.dylib",
+		"*.ncb",
+		"*.sdf",
+		"*.suo",
+		"*.pdb",
+		"*.idb",
+		".DS_Store",
+		"*.class",
+		"*.psd",
+		"*.db",
+		"*.sublime-workspace"
+	],
+	"font_face": "Fira Code",
+	"font_options":
+	[
+		"subpixel_antialias"
+	],
+	"font_size": 14,
+	"highlight_modified_tabs": true,
+	"ignored_packages":
+	[
+		"Rust",
+		"Vintage"
+	],
+	"ignored_words":
+	[
+		"emptyset",
+		"html",
+		"infty",
+		"mathcal",
+		"prec",
+		"py",
+		"python3",
+		"runtests",
+		"subseteq",
+		"succeq",
+		"txt",
+		"vec",
+		"venv"
+	],
+	"index_exclude_patterns":
+	[
+		"*.log",
+		".tox/",
+		"venv/",
+		"build/",
+		".ipynb_checkpoints/",
+		".mypy_cache/"
+	],
+	"rulers":
+	[
+		80
+	],
+	"scroll_past_end": true,
+	"show_encoding": true,
+	"show_line_endings": true,
+	"spell_check": true,
+	"theme": "Adaptive.sublime-theme",
+	"trim_trailing_white_space_on_save": true
+}
